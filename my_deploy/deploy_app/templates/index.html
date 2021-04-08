@@ -3,17 +3,62 @@
     <head>
         <meta charset="UTF-8">
         <title>运维平台</title>
-    </head>
-    <boby>
-        <h1>Hello World!</h1>
-        <ul>
-            {% for student in students %}
-            <li>
-                id:{{ student.id }}, 姓名: {{ student.name }}, age:{{ student.age }}
-            </li>
-            {% endfor %}
-        </ul>
-            <h2>Hello, World</h2>
+        <style>
+            body{
+                margin: 0;
+            }
+            .body1 {
+                display: flex;
+                flex-wrap: nowrap;
+                background-color: #999999;
+                height: 1000px;
+                width: 100%;
 
-    </boby>
+            }
+            .left{
+                background-color: #0a2140;
+                height: 100%;
+                width: 180px;
+            }
+            .right{
+                display: flex;
+                flex-direction: column ;
+                background-color: #eeeeee;
+                height: 100%;
+                width: 100%;
+            }
+            .nav{
+                background-color: #ffffff;
+                height: 50px;
+                width: 100%;
+                margin: 20px;
+
+
+            }
+            .content{
+                background-color: #ffffff;
+                height: 100%;
+                width: 100%;
+                margin: 20px;
+
+
+            }
+        </style>
+    </head>
+    <body>
+        <div id="body1" class="body1">
+
+        <div id="left" class="left">
+
+        </div>
+        <div id="right" class="right">
+            <div id="nav" class="nav">
+
+            </div>
+            <div id="content" class="content">
+
+            </div>
+        </div>
+        </div>
+    </body>
 </html>
