@@ -21,5 +21,11 @@ from deploy_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index)
+    path('', views.index),
+    path('shouye/',views.shouye),
+    path('deploy/',views.Deploy),
+    path('hostlist/', views.HostList),
+    path('install/', views.Install),
+    path('monitor/', views.Monitor),
+    path('site/',views.Site)
 ]
