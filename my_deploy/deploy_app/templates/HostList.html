@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <style>
         .nav {
+            background-image: url("../static/img/icon/location.png");
+            background-position: 22px 13px;
+            background-repeat: no-repeat;
             background-color: #ffffff;
+            line-height: 50px;
+            padding-left: 50px;
             height: 50px;
             margin: 24px 24px 0px 24px;
-            {#padding-top: 10px;#}
+            font-size: 19px;
+            font-family: "Microsoft YaHei UI";
+
         }
 
         .content {
@@ -15,8 +22,63 @@
             height: 100%;
             margin: 24px;
         }
-        img{
-            padding-top: 10px;
+
+        .nav_list {
+            font-size: 18px;
+
+        }
+
+        .nav_info {
+            font-size: 18px;
+            color: #999999;
+        }
+
+        .add_but {
+            margin: 24px;
+            background-color: #2f88ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            height: 30px;
+            width: 80px;
+        }
+
+        .host_table {
+            margin: 0 24px 0 24px;
+            border: #e6e6e6 1px solid;
+            border-radius: 4px;
+            overflow: auto;
+        }
+
+        .host_table table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            empty-cells: show;
+            width: 100%;
+        }
+
+        .host_table thead {
+            background-color: #eeeeee;
+            text-align: left;
+            vertical-align: bottom;
+            font-size: 14px;
+            {#color: #333333;#}
+
+        }
+        .host_table td {
+            color: #666666;
+        }
+
+        .host_table td, .host_table th {
+            margin: 0;
+            padding: .5em 1em;
+            font-size: 14px;
+            font-family: "Microsoft YaHei UI";
+            font-weight: normal;
+        }
+
+        td, th {
+            padding: 0;
         }
 
 
@@ -26,12 +88,48 @@
 
 <body>
 <div id="nav" class="nav">
-    <img src="../static/img/icon/location.png">
-    <span>主机列表/</span>
-    <span>主机信息</span>
+
+    <span class="nav_list">主机列表</span>
+    /
+    <span class="nav_info">主机信息</span>
 </div>
 <div id="content" class="content">
 
+    <button class="add_but">添加主机</button>
+    <div class="host_table">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>主机名称</th>
+                <th>IP</th>
+                <th>域名</th>
+                <th>用户名</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    1
+                </td>
+                <td>
+                    live-chat
+                </td>
+                <td>
+                    202.74.3.187
+                </td>
+                <td>
+                    api.networkgateway.net
+                </td>
+                <td>ubuntu</td>
+                <td>
+                    编辑 | 删除
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
