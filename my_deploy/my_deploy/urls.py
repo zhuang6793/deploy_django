@@ -24,8 +24,9 @@ urlpatterns = [
     path('', views.index),
     path('shouye/',views.shouye),
     path('deploy/',views.Deploy),
-    path('hostlist/', views.HostList),
+    path('hostlist/', views.Host_List),
     path('install/', views.Install),
     path('monitor/', views.Monitor),
+    path('edithostlist/', views.Edit_Host_List),
     path('site/',views.Site)
 ]
