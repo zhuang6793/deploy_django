@@ -170,7 +170,7 @@
             position: relative;
         }
 
-        input {
+        .form-control {
             height: 20px;
             line-height: 20px;
         }
@@ -251,7 +251,7 @@
         function registPost(formdata) {
             $.ajax({
                 type: "post",
-                url: "hostlist/",
+                url: "{% url 'deploy_app:hostlist' %}",
                 data: formdata,
                 processData: false,
                 contentType: false,
@@ -266,18 +266,16 @@
         }
 
         function editlist(id) {
-
-            $.ajax({
-                type: "post",
-                url: "edithostlist/",
-                data: {"id": id},
-            }).success(function (message) {
-                document.getElementById('edit_content').style.display = 'block';
-                document.getElementById('fade').style.display = 'block';
-
-            }).fail(function (err) {
-                console.log("err")
-            })
+           $.ajax({
+               type: "get",
+               url: "update/?id="+id,
+           }).success(function (message) {
+               console.log(id)
+               document.getElementById('edit_content').style.display = 'block';
+               document.getElementById('fade').style.display = 'block';
+           }).fail(function (err) {
+               console.log("err")
+           })
         }
 
     </script>
@@ -327,10 +325,10 @@
                     </td>
                     <td>
                         {{ list.host_user }}
+                        {{  edits }}
                     </td>
                     <td>
-                        <a class="edit" href="javascript:void(0)" onclick="editlist({{ list.id }})">编辑</a> | <a
-                            class="del">删除</a>
+                        <a class="edit" href="javascript:void(0)" onclick="editlist({{ list.id }})">编辑</a>  | <a class="del">删除</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -341,51 +339,60 @@
 
 <div id="add_content" class="add_content">
     <div class="add_head">添加主机</div>
-    <form action="hostlist\" method="post" id="form_data" enctype="multipart/form-data">
+    <form action="{% url 'deploy_app:hostlist' %}" method="post" id="form_data" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         <div class="add_list">
             <div class="line">
                 <span class="t_name">主机名称：</span>
                 <div class="info-r">
-                    <input type="text" name="host_name" id="host_name">
+{#                    <input type="text" name="host_name" id="host_name">#}
+                    {{ form.host_name }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">IP地址：</span>
                 <div class="info-r">
-                    <input type="text" name="ip_add" id="ip_add">
+{#                    <input type="text" name="ip_add" id="ip_add">#}
+                    {{ form.host_ip }}
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">域名：</span>
                 <div class="info-r">
-                    <input type="text" name="domain" id="domain">
+{#                    <input type="text" name="domain" id="domain">#}
+                    {{ form.domain }}
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">用户名：</span>
                 <div class="info-r">
-                    <input type="text" name="username" id="username">
+{#                    <input type="text" name="username" id="username">#}
+                    {{ form.host_user }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密码：</span>
                 <div class="info-r">
-                    <input type="password" name="password" id="password">
+{#                    <input type="password" name="password" id="password">#}
+                    {{ form.host_password }}
                 </div>
+
             </div>
             <div class="line">
                 <span class="t_name">端口：</span>
                 <div class="info-r">
-                    <input type="text" name="port" id="port">
+{#                    <input type="text" name="port" id="port">#}
+                    {{ form.host_port }}
                 </div>
+
             </div>
             <div class="line">
                 <span class="t_name">密钥：</span>
                 <div class="info-r">
-                    <input type="file" name="key_file" id="key_file">
+{#                    <input type="file" name="key_file" id="key_file">#}
+                    {{ form.host_key_file }}
                 </div>
 
             </div>
@@ -402,9 +409,10 @@
         </div>
     </form>
 </div>
+
 <div id="edit_content" class="add_content">
     <div class="add_head">编辑主机</div>
-    <form action="edithostlist\" method="post" id="edit_form_data" enctype="multipart/form-data">
+    <form action="" method="post" id="edit_form_data" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="add_list">
             <div class="line">
@@ -412,45 +420,45 @@
                 <span class="t_name">主机名称：</span>
                 <div class="info-r">
 
-                    <input type="text" name="edit_host_name" id="edit_host_name"> {{  edit_list.host_name  }}
+                    <input type="text" name="edit_host_name" id="edit_host_name" value="{{  edits.host_name }}">
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">IP地址：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_ip_add" id="edit_ip_add" value="{{ edit_list.host_ip }}">
+                    <input type="text" name="edit_ip_add" id="edit_ip_add" value="{{ edits.host_ip }}">
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">域名：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_domain" id="edit_domain" value="{{ edit_list.domain }}">
+                    <input type="text" name="edit_domain" id="edit_domain" value="{{ edits.domain }}">
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">用户名：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_username" id="edit_username" value="{{ edit_list.host_user }}">
+                    <input type="text" name="edit_username" id="edit_username" value="{{ edits.host_user }}">
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密码：</span>
                 <div class="info-r">
-                    <input type="password" name="edit_password" id="edit_password" value="{{ edit_list.host_password }}">
+                    <input type="password" name="edit_password" id="edit_password" value="{{ edits.host_password }}">
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">端口：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_port" id="edit_port" value="{{ edit_list.host_port }}">
+                    <input type="text" name="edit_port" id="edit_port" value="{{ edits.host_port }}">
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密钥：</span>
                 <div class="info-r">
-                    <input type="file" name="edit_key_file" id="edit_key_file" value="{{ edit_list.host_key_file }}">
+                    <input type="file" name="edit_key_file" id="edit_key_file" >
                 </div>
 
             </div>

@@ -7,11 +7,11 @@
             <li id="exit"><a href="/exit" class="nav_exit">退出</a></li>
 
 
-
  $(function(){
 
             $("#nav_ul li").click(function(){
                 $(this).siblings('li').removeClass('nav_select')
                 $(this).addClass('nav_select')
+
             });
         });

@@ -99,7 +99,7 @@
         }
 
 
-        .nav_shouye {
+        .nav_dashboard {
             background: url("../static/img/icon/home.png");
             background-repeat: no-repeat;
             background-position: 50px 11px;
@@ -168,32 +168,32 @@
                 var sId = window.location.hash;
                 var pathn, i;
                 switch (sId) {
-                    case "#shouye":
-                        pathn = "shouye";
+                    case "#dashboard":
+                        pathn = "{% url 'deploy_app:dashboard' %}";
                         i = 0;
                         break;
                     case "#hostlist":
-                        pathn = "hostlist";
+                        pathn = "{% url 'deploy_app:hostlist' %}";
                         i = 1;
                         break;
                     case "#deploy":
-                        pathn = "deploy";
+                        pathn = "{% url 'deploy_app:deploy' %}";
                         i = 2;
                         break;
                     case "#install":
-                        pathn = "install";
+                        pathn = "{% url 'deploy_app:install' %}";
                         i = 3;
                         break;
                     case "#monitor":
-                        pathn = "monitor";
+                        pathn = "{% url 'deploy_app:monitor' %}";
                         i = 4;
                         break;
                     case "#site":
-                        pathn = "site";
+                        pathn = "{% url 'deploy_app:site' %}";
                         i = 5;
                         break;
                     default:
-                        pathn = "shouye";
+                        pathn = "{% url 'deploy_app:dashboard' %}";
                         i = 0;
                         break;
                 }
@@ -216,7 +216,7 @@
             </a>
         </div>
         <ul id="nav_ul">
-            <li id="shouye"><a class="nav_shouye">首页</a></li>
+            <li id="dashboard"><a class="nav_dashboard">首页</a></li>
             <li id="hostlist"><a class="nav_hostlist">主机列表</a></li>
             <li id="deploy"><a class="nav_deploy">部署</a></li>
             <li id="install"><a class="nav_install">安装</a></li>
