@@ -268,7 +268,7 @@
         function editlist(id) {
            $.ajax({
                type: "get",
-               url: "update/?id="+id,
+               url: "hostlist/update/"+id,
            }).success(function (message) {
                console.log(id)
                document.getElementById('edit_content').style.display = 'block';
@@ -345,14 +345,12 @@
             <div class="line">
                 <span class="t_name">主机名称：</span>
                 <div class="info-r">
-{#                    <input type="text" name="host_name" id="host_name">#}
                     {{ form.host_name }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">IP地址：</span>
                 <div class="info-r">
-{#                    <input type="text" name="ip_add" id="ip_add">#}
                     {{ form.host_ip }}
                 </div>
 
@@ -360,7 +358,6 @@
             <div class="line">
                 <span class="t_name">域名：</span>
                 <div class="info-r">
-{#                    <input type="text" name="domain" id="domain">#}
                     {{ form.domain }}
                 </div>
 
@@ -368,14 +365,12 @@
             <div class="line">
                 <span class="t_name">用户名：</span>
                 <div class="info-r">
-{#                    <input type="text" name="username" id="username">#}
                     {{ form.host_user }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密码：</span>
                 <div class="info-r">
-{#                    <input type="password" name="password" id="password">#}
                     {{ form.host_password }}
                 </div>
 
@@ -383,7 +378,6 @@
             <div class="line">
                 <span class="t_name">端口：</span>
                 <div class="info-r">
-{#                    <input type="text" name="port" id="port">#}
                     {{ form.host_port }}
                 </div>
 
@@ -391,7 +385,6 @@
             <div class="line">
                 <span class="t_name">密钥：</span>
                 <div class="info-r">
-{#                    <input type="file" name="key_file" id="key_file">#}
                     {{ form.host_key_file }}
                 </div>
 
@@ -419,46 +412,45 @@
 
                 <span class="t_name">主机名称：</span>
                 <div class="info-r">
-
-                    <input type="text" name="edit_host_name" id="edit_host_name" value="{{  edits.host_name }}">
+                    {{ form.host_name }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">IP地址：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_ip_add" id="edit_ip_add" value="{{ edits.host_ip }}">
+                    {{ form.host_ip }}
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">域名：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_domain" id="edit_domain" value="{{ edits.domain }}">
+                    {{ form.domain }}
                 </div>
 
             </div>
             <div class="line">
                 <span class="t_name">用户名：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_username" id="edit_username" value="{{ edits.host_user }}">
+                     {{ form.host_user }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密码：</span>
                 <div class="info-r">
-                    <input type="password" name="edit_password" id="edit_password" value="{{ edits.host_password }}">
+                     {{ form.host_password }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">端口：</span>
                 <div class="info-r">
-                    <input type="text" name="edit_port" id="edit_port" value="{{ edits.host_port }}">
+                     {{ form.host_port }}
                 </div>
             </div>
             <div class="line">
                 <span class="t_name">密钥：</span>
                 <div class="info-r">
-                    <input type="file" name="edit_key_file" id="edit_key_file" >
+                    {{ form.host_key_file }}
                 </div>
 
             </div>

@@ -20,7 +20,6 @@ class HostListView(ListView):
         form = forms.HostListForm()
         context = super().get_context_data(**kwargs)
         context['form'] = form
-
         return context
 
 
@@ -28,10 +27,20 @@ class HostListView(ListView):
 class HostListUpdateView(UpdateView):
     model = HostList
     template_name = 'HostList.html'
+    form_class = forms.HostListForm
+    success_url = '/#hostlist/'
+
+    def get(self, reuqest, **kwargs):
+        self.object = HostList.objects.get(id = self.kwargs['id'])
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context = self.get_context_data(object=self.object, form=form)
+        return self.render_to_response(context)
 
     def get_object(self, queryset=None):
-        edits = HostList.objects.get(id=self.kwargs['id'])
-        return edits
+        obj = HostList.objects.get(id = self.kwargs['id'])
+        return obj
+
 
 
 
@@ -39,7 +48,7 @@ class AddHostList(HostListView, View):
 
     def post(self, request, *args, **kwargs):
         cursor = connection.cursor()
-        form = forms.HostListForm(request.POST)
+        form = forms.HostListForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             cursor.execute("SET @i=0;")
@@ -47,27 +56,8 @@ class AddHostList(HostListView, View):
             cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
             return redirect("/#hostlist")
         else:
-            print(form.errors)
-            return HttpResponse("数据有误")
-        # host_name = request.POST.get("host_name", None)
-        # ip = request.POST.get("ip_add", None)
-        # domain = request.POST.get("domain", None)
-        # username = request.POST.get("username", None)
-        # password = request.POST.get("password", None)
-        # port = request.POST.get("port", None)
-        # key_file = request.FILES.get("key_file")
-        # key_path = None
-        # if key_file != None:
-        #     if os.path.exists('./key_file'):
-        #         key_path = './key_file/' + key_file.name
-        #         with open('./key_file/' + key_file.name, 'wb') as f:
-        #             for chunk in key_file:
-        #                 f.write(chunk)
-        #     else:
-        #         os.mkdir('./key_file')
-        # hostlist = HostList(host_name=host_name, host_ip=ip, domain=domain, host_user=username, host_password=password,
-        #                     host_port=port, host_key_file=key_path)
-        # hostlist.save()
+
+            return HttpResponse(form.errors)
 
 
 

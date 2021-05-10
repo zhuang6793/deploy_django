@@ -7,15 +7,15 @@ class HostListForm(ModelForm):
     class Meta:
         model = models.HostList
         fields = "__all__"
-        labels = {
-            'host_name': '主机名称',
-            'host_ip': 'IP地址',
-            'domain': '域名',
-            'host_user': '用户名',
-            'host_password': '密码',
-            'host_port': '端口',
-            'host_key_file': '密钥'
-        }
+        # labels = {
+        #     'host_name': '主机名称',
+        #     'host_ip': 'IP地址',
+        #     'domain': '域名',
+        #     'host_user': '用户名',
+        #     'host_password': '密码',
+        #     'host_port': '端口',
+        #     'host_key_file': '密钥'
+        # }
         widgets = {
             'host_name': wdt.TextInput(attrs={"class": "form-control"}),
             'host_ip': wdt.TextInput(attrs={"class": "form-control"}),
