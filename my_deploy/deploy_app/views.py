@@ -26,14 +26,19 @@ class HostListView(ListView):
 
 class HostListUpdateView(UpdateView):
     model = HostList
-    template_name = 'UpdateHostList.html'
     form_class = forms.HostListForm
-    success_url = '/#hostlist/'
+    template_name = 'UpdateHostList.html'
 
-    def get(self, request, *args, **kwargs):
-        adv_positin = HostList.objects.get(id = self.kwargs['pk'])
-        form = self.form_class(instance= adv_positin)
-        return render( request, 'UpdateHostList.html', {'form': form, 'id': self.kwargs['pk']})
+    def dispatch(self, *args, **kwargs):
+        self.host_id = kwargs['pk']
+        return super(HostListUpdateView, self).dispatch(*args, **kwargs)
+
+
+    # def get(self, request, *args, **kwargs):
+    #     adv_positin = HostList.objects.get(id = self.kwargs['pk'])
+    #     form = self.form_class(instance= adv_positin)
+    #     return render(request, 'UpdateHostList.html', {'form': form, 'id': self.kwargs['pk']})
+
 
 
 class AddHostList(HostListView, View):

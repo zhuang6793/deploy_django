@@ -1,5 +1,6 @@
 from django.urls import path,re_path
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib import staticfiles
 from . import views
 
 app_name = 'deploy_app'
@@ -16,3 +17,5 @@ urlpatterns = [
     path(r'site/', views.Site, name='site'),
     path(r'test1/', views.test1),
 ]
+
+urlpatterns += staticfiles_urlpatterns()

@@ -88,7 +88,7 @@
 
 
         .logo {
-            background: url("../static/img/icon/logo.png");
+            background: url("/static/img/icon/logo.png");
             background-repeat: no-repeat;
             display: inline-block;
             padding-left: 40px;
@@ -100,13 +100,13 @@
 
 
         .nav_dashboard {
-            background: url("../static/img/icon/home.png");
+            background: url("/static/img/icon/home.png");
             background-repeat: no-repeat;
             background-position: 50px 11px;
         }
 
         .nav_hostlist {
-            background: url("../static/img/icon/list.png");
+            background: url("/static/img/icon/list.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -114,7 +114,7 @@
         }
 
         .nav_deploy {
-            background: url("../static/img/icon/deploy.png");
+            background: url("/static/img/icon/deploy.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -122,7 +122,7 @@
         }
 
         .nav_install {
-            background: url("../static/img/icon/install.png");
+            background: url("/static/img/icon/install.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -130,7 +130,7 @@
         }
 
         .nav_monitor {
-            background: url("../static/img/icon/monitor.png");
+            background: url("/static/img/icon/monitor.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -138,7 +138,7 @@
         }
 
         .nav_site {
-            background: url("../static/img/icon/set.png");
+            background: url("/static/img/icon/set.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -146,65 +146,15 @@
         }
 
         .nav_exit {
-            background: url("../static/img/icon/out.png");
+            background: url("/static/img/icon/out.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
         }
 
 
     </style>
-
-    <script src="../static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/js/layer.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $("#nav_ul").on("click", "li", function (e) {
-                var sId = $(this).attr("id");
-                window.location.hash = sId;
-                loadInner(sId);
-            });
-
-            function loadInner(sId) {
-                var sId = window.location.hash;
-                var pathn, i;
-                switch (sId) {
-                    case "#dashboard":
-                        pathn = "{% url 'deploy_app:dashboard' %}";
-                        i = 0;
-                        break;
-                    case "#hostlist":
-                        pathn = "{% url 'deploy_app:hostList' %}";
-                        i = 1;
-                        break;
-                    case "#deploy":
-                        pathn = "{% url 'deploy_app:deploy' %}";
-                        i = 2;
-                        break;
-                    case "#install":
-                        pathn = "{% url 'deploy_app:install' %}";
-                        i = 3;
-                        break;
-                    case "#monitor":
-                        pathn = "{% url 'deploy_app:monitor' %}";
-                        i = 4;
-                        break;
-                    case "#site":
-                        pathn = "{% url 'deploy_app:site' %}";
-                        i = 5;
-                        break;
-                    default:
-                        pathn = "{% url 'deploy_app:dashboard' %}";
-                        i = 0;
-                        break;
-                }
-                $("#right").load(pathn);
-                $("#nav_ul li").eq(i).addClass("nav_select").siblings().removeClass("nav_select");
-            }
-
-            var sId = window.location.hash;
-            loadInner(sId);
-        })
-    </script>
+    <script src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/layer.js"></script>
 </head>
 <body>
 <div id="box" class="box">
@@ -216,18 +166,21 @@
             </a>
         </div>
         <ul id="nav_ul">
-            <li id="dashboard"><a class="nav_dashboard">首页</a></li>
-            <li id="hostlist"><a class="nav_hostlist">主机列表</a></li>
-            <li id="deploy"><a class="nav_deploy">部署</a></li>
-            <li id="install"><a class="nav_install">安装</a></li>
-            <li id="monitor"><a class="nav_monitor">监控</a></li>
-            <li id="site"><a class="nav_site">设置</a></li>
-            <li id="exit"><a class="nav_exit">退出</a></li>
+            <li id="dashboard"><a class="nav_dashboard" href="{% url "deploy_app:dashboard" %}">首页</a></li>
+            <li id="hostlist"><a class="nav_hostlist" href="{% url "deploy_app:hostList" %}">主机列表</a></li>
+            <li id="deploy"><a class="nav_deploy" href="{% url "deploy_app:deploy" %}">部署</a></li>
+            <li id="install"><a class="nav_install" href="{% url "deploy_app:install" %}">安装</a></li>
+            <li id="monitor"><a class="nav_monitor" href="{% url "deploy_app:monitor" %}">监控</a></li>
+            <li id="site"><a class="nav_site" href="{% url "deploy_app:site" %}">设置</a></li>
+            <li id="exit"><a class="nav_exit" href="#">退出</a></li>
         </ul>
     </div>
-    <div id="right" class="right">
 
+    <div id="right" class="right">
+        {% block content %}
+        {% endblock  %}
     </div>
+
     <div id="bottom" class="bottom">Copyright © 2021-2022 运维平台  runoob.com All Rights Reserved. </div>
 </div>
 </body>

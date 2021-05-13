@@ -252,124 +252,128 @@
 
 
 <body>
-<div id="nav" class="nav">
+{% extends "index.html" %}
 
-    <span class="nav_list">主机列表</span>
-    /
-    <span class="nav_info">主机信息</span>
-</div>
-<div id="content" class="content">
+{% block content %}
+    <div id="nav" class="nav">
 
-    <button class="add_but" onclick="document.getElementById('add_content').style.display='block';
-    document.getElementById('fade').style.display='block';">
-        添加主机
-    </button>
-    <div class=" host_table
-    ">
-        <table>
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>主机名称</th>
-                <th>IP</th>
-                <th>域名</th>
-                <th>用户名</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for list in hostlist %}
-                <tr>
-                    <td>
-                        {{ list.id }}
-                    </td>
-                    <td>
-                        {{ list.host_name }}
-                    </td>
-                    <td>
-                        {{ list.host_ip }}
-                    </td>
-                    <td>
-                        {{ list.domain }}
-                    </td>
-                    <td>
-                        {{ list.host_user }}
-                        {{  edits }}
-                    </td>
-                    <td>
-                        <a class="edit" href="{% url "deploy_app:hostListUpdate" list.id %}">编辑</a>  | <a class="del">删除</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <span class="nav_list">主机列表</span>
+        /
+        <span class="nav_info">主机信息</span>
     </div>
-</div>
-<div id="add_content" class="add_content">
-    <div class="add_head">添加主机</div>
-    <form action="{% url 'deploy_app:hostList' %}" method="post" id="form_data" enctype="multipart/form-data" novalidate>
-        {% csrf_token %}
-        <div class="add_list">
-            <div class="line">
-                <span class="t_name">主机名称：</span>
-                <div class="info-r">
-                    {{ form.host_name }}
-                </div>
-            </div>
-            <div class="line">
-                <span class="t_name">IP地址：</span>
-                <div class="info-r">
-                    {{ form.host_ip }}
-                </div>
-
-            </div>
-            <div class="line">
-                <span class="t_name">域名：</span>
-                <div class="info-r">
-                    {{ form.domain }}
-                </div>
-
-            </div>
-            <div class="line">
-                <span class="t_name">用户名：</span>
-                <div class="info-r">
-                    {{ form.host_user }}
-                </div>
-            </div>
-            <div class="line">
-                <span class="t_name">密码：</span>
-                <div class="info-r">
-                    {{ form.host_password }}
-                </div>
-
-            </div>
-            <div class="line">
-                <span class="t_name">端口：</span>
-                <div class="info-r">
-                    {{ form.host_port }}
-                </div>
-
-            </div>
-            <div class="line">
-                <span class="t_name">密钥：</span>
-                <div class="info-r">
-                    {{ form.host_key_file }}
-                </div>
-
-            </div>
-            <div class="test_but">
-                <button id="test" type="button">测试连接</button>
-            </div>
+    <div id="content" class="content">
+        <button class="add_but" onclick="document.getElementById('add_content').style.display='block';
+    document.getElementById('fade').style.display='block';">
+            添加主机
+        </button>
+        <div class=" host_table">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>主机名称</th>
+                    <th>IP</th>
+                    <th>域名</th>
+                    <th>用户名</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for list in hostlist %}
+                    <tr>
+                        <td>
+                            {{ list.id }}
+                        </td>
+                        <td>
+                            {{ list.host_name }}
+                        </td>
+                        <td>
+                            {{ list.host_ip }}
+                        </td>
+                        <td>
+                            {{ list.domain }}
+                        </td>
+                        <td>
+                            {{ list.host_user }}
+                        </td>
+                        <td>
+                            <a class="edit" href="{% url 'deploy_app:hostListUpdate' list.id %}">编辑</a> | <a
+                                class="del">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="add_bottom">
-            <button id="clear_but" class="clone_but" onclick="document.getElementById('add_content').style.display='none';
+    </div>
+
+    <div id="add_content" class="add_content">
+        <div class="add_head">添加主机</div>
+        <form action="{% url 'deploy_app:hostList' %}" method="post" id="form_data" enctype="multipart/form-data"
+              novalidate>
+            {% csrf_token %}
+            <div class="add_list">
+                <div class="line">
+                    <span class="t_name">主机名称：</span>
+                    <div class="info-r">
+                        {{ form.host_name }}
+                    </div>
+                </div>
+                <div class="line">
+                    <span class="t_name">IP地址：</span>
+                    <div class="info-r">
+                        {{ form.host_ip }}
+                    </div>
+
+                </div>
+                <div class="line">
+                    <span class="t_name">域名：</span>
+                    <div class="info-r">
+                        {{ form.domain }}
+                    </div>
+
+                </div>
+                <div class="line">
+                    <span class="t_name">用户名：</span>
+                    <div class="info-r">
+                        {{ form.host_user }}
+                    </div>
+                </div>
+                <div class="line">
+                    <span class="t_name">密码：</span>
+                    <div class="info-r">
+                        {{ form.host_password }}
+                    </div>
+
+                </div>
+                <div class="line">
+                    <span class="t_name">端口：</span>
+                    <div class="info-r">
+                        {{ form.host_port }}
+                    </div>
+
+                </div>
+                <div class="line">
+                    <span class="t_name">密钥：</span>
+                    <div class="info-r">
+                        {{ form.host_key_file }}
+                    </div>
+
+                </div>
+                <div class="test_but">
+                    <button id="test" type="button">测试连接</button>
+                </div>
+            </div>
+            <div class="add_bottom">
+                <button id="clear_but" class="clone_but" onclick="document.getElementById('add_content').style.display='none';
                     document.getElementById('fade').style.display='none';" type="button">
-                关闭
-            </button>
-            <button id="but" type="submit">提交</button>
-        </div>
-    </form>
-</div>
-<div id="fade" class="black_overlay"></div>
+                    关闭
+                </button>
+                <button id="but" type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+    <div id="fade" class="black_overlay"></div>
+{% endblock %}
 </body>
 </html>

@@ -25,7 +25,7 @@ SECRET_KEY = 'o^1)asy@$l_#zlob!3&-a)vlf5wzrbx!j&g-r=r7xjlqq0e#_&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.49']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'oam_db',
         'USER': 'root',
         'PASSWORD': 'admin@123',
-        'HOST': '192.168.1.65',
-        # 'HOST': '127.0.0.1',
+        # 'HOST': '192.168.1.65',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
 
     }
@@ -128,4 +128,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'deploy_app/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = (
+    ('css',os.path.join(STATIC_ROOT,'css').replace('\\','/') ),
+    ('js',os.path.join(STATIC_ROOT,'js').replace('\\','/') ),
+    ('img',os.path.join(STATIC_ROOT,'img').replace('\\','/') ),
+    ('upload',os.path.join(STATIC_ROOT,'upload').replace('\\','/') ),
+)
