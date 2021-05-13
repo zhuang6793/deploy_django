@@ -26,22 +26,14 @@ class HostListView(ListView):
 
 class HostListUpdateView(UpdateView):
     model = HostList
-    template_name = 'HostList.html'
+    template_name = 'UpdateHostList.html'
     form_class = forms.HostListForm
     success_url = '/#hostlist/'
 
-    def get(self, reuqest, **kwargs):
-        self.object = HostList.objects.get(id = self.kwargs['id'])
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(object=self.object, form=form)
-        return self.render_to_response(context)
-
-    def get_object(self, queryset=None):
-        obj = HostList.objects.get(id = self.kwargs['id'])
-        return obj
-
-
+    def get(self, request, *args, **kwargs):
+        adv_positin = HostList.objects.get(id = self.kwargs['pk'])
+        form = self.form_class(instance= adv_positin)
+        return render( request, 'UpdateHostList.html', {'form': form, 'id': self.kwargs['pk']})
 
 
 class AddHostList(HostListView, View):
@@ -64,6 +56,9 @@ class AddHostList(HostListView, View):
 def Dashboard(request):
     return render(request, 'Dashboard.html')
 
+def asd(request):
+    return render(request, 'asd.html')
+
 
 def Deploy(request):
     return render(request, 'Deploy.html')
@@ -79,3 +74,6 @@ def Monitor(request):
 
 def Site(request):
     return render(request, 'Site.html')
+
+def test1(request):
+    return render(request, 'bootstrap-test.html')

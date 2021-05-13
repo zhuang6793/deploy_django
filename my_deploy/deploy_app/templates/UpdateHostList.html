@@ -199,115 +199,18 @@
     </style>
     <script type="text/javascript" src="../static/js/jquery.min.js"></script>
     <script type="text/javascript" src="../static/js/layer.js"></script>
-    <script type="text/javascript">
-        $("#but").click(function () {
-            var formdata = new FormData();
-            var username = $.trim($("#username").val());
-            var host_name = $.trim($("#host_name").val());
-            var port = $.trim($("#port").val());
-            var ip_add = $.trim($("#ip_add").val());
-            var key_file = $('[name=key_file]')[0].files[0];
-            var password = $.trim($("#password").val());
-            var domain = $.trim($("#domain").val());
-            formdata.append('username', username)
-            formdata.append('host_name', host_name)
-            formdata.append('port', port)
-            formdata.append('ip_add', ip_add)
-            formdata.append('key_file', key_file)
-            formdata.append('password', password)
-            formdata.append('domain', domain)
-
-            if (username == "") {
-                layer.tips("用户名不能为空", '#username', {
-                    tips: [2, '#c00',]
-                });
-                return false;
-            }
-            if (host_name == "") {
-
-                layer.tips("主机名不能为空", '#host_name', {
-                    tips: [2, '#c00',]
-                });
-                return false;
-            }
-            if (ip_add == "") {
-                layer.tips("IP地址不能为空", '#ip_add', {
-                    tips: [2, '#c00',]
-                });
-                return false;
-            }
-            if (port == "") {
-                layer.tips("端口不能为空", '#port', {
-                    tips: [2, '#c00',]
-                });
-                return false;
-            }
-
-            registPost(formdata);
-            event.preventDefault();
-
-        });
-    </script>
+    <title>编辑主机信息</title>
 </head>
-
-
 <body>
 <div id="nav" class="nav">
-
     <span class="nav_list">主机列表</span>
     /
-    <span class="nav_info">主机信息</span>
+    <span class="nav_info">编辑主机信息</span>
 </div>
-<div id="content" class="content">
 
-    <button class="add_but" onclick="document.getElementById('add_content').style.display='block';
-    document.getElementById('fade').style.display='block';">
-        添加主机
-    </button>
-    <div class=" host_table
-    ">
-        <table>
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>主机名称</th>
-                <th>IP</th>
-                <th>域名</th>
-                <th>用户名</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for list in hostlist %}
-                <tr>
-                    <td>
-                        {{ list.id }}
-                    </td>
-                    <td>
-                        {{ list.host_name }}
-                    </td>
-                    <td>
-                        {{ list.host_ip }}
-                    </td>
-                    <td>
-                        {{ list.domain }}
-                    </td>
-                    <td>
-                        {{ list.host_user }}
-                        {{  edits }}
-                    </td>
-                    <td>
-                        <a class="edit" href="{% url "deploy_app:hostListUpdate" list.id %}">编辑</a>  | <a class="del">删除</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-<div id="add_content" class="add_content">
-    <div class="add_head">添加主机</div>
-    <form action="{% url 'deploy_app:hostList' %}" method="post" id="form_data" enctype="multipart/form-data" novalidate>
+<div class="edit_content">
+    <form action="{% url "deploy_app:hostListUpdate" id %}" method="post" id="form_data" enctype="multipart/form-data"
+          novalidate>
         {% csrf_token %}
         <div class="add_list">
             <div class="line">
@@ -357,19 +260,10 @@
                 </div>
 
             </div>
-            <div class="test_but">
-                <button id="test" type="button">测试连接</button>
-            </div>
         </div>
         <div class="add_bottom">
-            <button id="clear_but" class="clone_but" onclick="document.getElementById('add_content').style.display='none';
-                    document.getElementById('fade').style.display='none';" type="button">
-                关闭
-            </button>
             <button id="but" type="submit">提交</button>
         </div>
-    </form>
-</div>
-<div id="fade" class="black_overlay"></div>
+
 </body>
 </html>
