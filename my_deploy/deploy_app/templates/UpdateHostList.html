@@ -8,7 +8,12 @@
 <body>
 {% extends './index.html' %}
  {% block content %}
-    <h1>编辑信息</h1>
+     {{ form.host_name }}
+     {{ form.host_username }}
+     {{ form.host_ip }}
+     {{ form.domain }}
+     {{ form.host_port }}
+     {{ form.host_key_file }}
 {% endblock %}
 
 </body>

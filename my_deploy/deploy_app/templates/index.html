@@ -15,7 +15,6 @@
         }
 
         .left {
-            {#flex-shrink: 0;#}
             background-color: #0a2140;
             height: 100%;
             width: 15%;
@@ -72,7 +71,7 @@
             height: 100%;
         }
 
-        .left ul li :hover {
+        .left ul li:hover {
             background-color: #010c1a;
             border-left: #2f88ff 2px solid;
         }
@@ -117,8 +116,6 @@
             background: url("/static/img/icon/deploy.png");
             background-repeat: no-repeat;
             background-position: 50px 13px;
-
-
         }
 
         .nav_install {
@@ -155,6 +152,14 @@
     </style>
     <script src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/layer.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#nav_ul li').click(function () {
+                $(this).siblings('li').removeClass('nav_select');
+                $(this).addClass('nav_select');
+            })
+        })
+    </script>
 </head>
 <body>
 <div id="box" class="box">
@@ -178,6 +183,7 @@
 
     <div id="right" class="right">
         {% block content %}
+
         {% endblock  %}
     </div>
 
