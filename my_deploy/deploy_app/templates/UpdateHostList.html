@@ -1,20 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
-    <title>编辑主机信息</title>
-</head>
-<body>
-{% extends './index.html' %}
- {% block content %}
-     {{ form.host_name }}
-     {{ form.host_username }}
-     {{ form.host_ip }}
-     {{ form.domain }}
-     {{ form.host_port }}
-     {{ form.host_key_file }}
+{% extends './HostList.html' %}
+{% block nav_info %}
+    /
+    <span class="nav_info">编辑主机</span>
 {% endblock %}
 
-</body>
-</html>
+
+{% block hostlist_content %}
+    <form method="post">{% csrf_token %}
+        <div class="add_list">
+            <div class="line">
+                <span class="t_name">主机名称：</span>
+                <div class="info-r">
+                    {{ form.host_name }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">IP：</span>
+                <div class="info-r">
+                    {{ form.host_ip }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">用户名：</span>
+                <div class="info-r">
+                    {{ form.host_user }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">密码：</span>
+                <div class="info-r">
+                    {{ form.host_password }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">域名：</span>
+                <div class="info-r">
+                    {{ form.domain }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">端口：</span>
+                <div class="info-r">
+                    {{ form.host_port }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="t_name">密钥：</span>
+                <div class="info-r">
+                    {{ form.host_key_file }}
+                </div>
+            </div>
+            <div class="line">
+                <span class="update_but">
+                    <button id="clear_but" onclick="window.location.href='/hostlist'" type="button">
+                    返回
+                </button>
+
+                    <input type="submit" value="更新">
+                </span>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}

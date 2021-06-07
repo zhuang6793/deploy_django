@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>运维平台</title>
+    {% load static %}
     <style>
         body {
             margin: 0;
@@ -46,7 +47,7 @@
             font-size: 12px;
         }
 
-        .top_logo{
+        .top_logo {
             margin-top: 20px;
             margin-left: 20px;
         }
@@ -87,7 +88,7 @@
 
 
         .logo {
-            background: url("/static/img/icon/logo.png");
+            background: url("{% static '/img/icon/logo.png' %}");
             background-repeat: no-repeat;
             display: inline-block;
             padding-left: 40px;
@@ -99,13 +100,13 @@
 
 
         .nav_dashboard {
-            background: url("/static/img/icon/home.png");
+            background: url("{% static '/img/icon/home.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 11px;
         }
 
         .nav_hostlist {
-            background: url("/static/img/icon/list.png");
+            background: url("{% static '/img/icon/list.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -113,13 +114,13 @@
         }
 
         .nav_deploy {
-            background: url("/static/img/icon/deploy.png");
+            background: url("{% static '/img/icon/deploy.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
         }
 
         .nav_install {
-            background: url("/static/img/icon/install.png");
+            background: url("{% static '/img/icon/install.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -127,7 +128,7 @@
         }
 
         .nav_monitor {
-            background: url("/static/img/icon/monitor.png");
+            background: url("{% static '/img/icon/monitor.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
 
@@ -135,31 +136,20 @@
         }
 
         .nav_site {
-            background: url("/static/img/icon/set.png");
+            background: url("{% static '/img/icon/set.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
-
-
         }
 
         .nav_exit {
-            background: url("/static/img/icon/out.png");
+            background: url("{% static '/img/icon/out.png' %}");
             background-repeat: no-repeat;
             background-position: 50px 13px;
         }
 
-
     </style>
-    <script src="/static/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/layer.js"></script>
-    <script type="text/javascript">
-        $(function(){
-            $('#nav_ul li').click(function () {
-                $(this).siblings('li').removeClass('nav_select');
-                $(this).addClass('nav_select');
-            })
-        })
-    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
 </head>
 <body>
 <div id="box" class="box">
@@ -183,11 +173,19 @@
 
     <div id="right" class="right">
         {% block content %}
-
-        {% endblock  %}
+            <h1>首页</h1>
+        {% endblock %}
     </div>
 
-    <div id="bottom" class="bottom">Copyright © 2021-2022 运维平台  runoob.com All Rights Reserved. </div>
+    <div id="bottom" class="bottom">Copyright © 2021-2022 运维平台 runoob.com All Rights Reserved.</div>
+    <script type="text/javascript">
+        $(function () {
+            $('#nav_ul li').click(function () {
+                $(this).siblings('li').removeClass('nav_ul');
+                $(this).addClass('nav_select');
+            })
+        })
+    </script>
 </div>
 </body>
 </html>
