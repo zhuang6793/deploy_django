@@ -1,13 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>安装</title>
-</head>
-<body>
-    {% extends 'index.html' %}
-    {% block content %}
-    <h1>安装</h1>
+{% extends "index.html" %}
+
+{% block content %}
+    <style>
+        .server {
+            margin: 24px;
+            display: flex;
+        }
+
+        .server_input {
+            width: 112px;
+            height: 32px;
+            border: 1px solid #CCCCCC;
+            opacity: 1;
+            border-radius: 4px;
+            margin-right: 24px;
+            display: flex;
+        }
+
+        .server_input span {
+            color: #2F88FF;
+            margin-top: 5px;
+        }
+
+        .server_input input {
+            width: 18px;
+            height: 18px;
+            align-self: center;
+        }
+    </style>
+    <div id="nav" class="nav">
+        <span class="nav_list">安装软件</span>
+    </div>
+
+    <div id="content" class="content">
+        <form>
+            <div id="server" class="server">
+                <div class="server_input"><input type="checkbox" name="MySQL"> <span>MySQL</span></div>
+                <div class="server_input"><input type="checkbox" name="JDK"> <span>JDK</span></div>
+                <div class="server_input"><input type="checkbox" name="Nginx"> <span>Nginx</span></div>
+                <div class="server_input"><input type="checkbox" name="Redis"> <span>Redis</span></div>
+            </div>
+            <div class=" host_table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>主机名称</th>
+                        <th>IP</th>
+                        <th>状态</th>
+                        <th>已安装服务</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for list in hoststatus %}
+                        <tr>
+                            <td>
+                                {{ list.id }}
+                            </td>
+                            <td>
+                                {{ list.host_id.host_name }}
+                            </td>
+                            <td>
+                                {{ list.host_id.host_ip }}
+                            </td>
+                            <td>
+                                {{ list.host_status }}
+                            </td>
+                            <td>
+                                {{ list.install_server }}
+                            </td>
+                            <td>
+                                <a class="edit" href="{% url 'deploy_app:hostListUpdate' list.id %}">编辑</a> |
+                                <a class="del" href="/hostlist/delete?host_id={{ list.id }}"
+                                   data-confirm="确定删除吗？">删除</a>
+
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>
+                                <h2>暂无</h2>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+
+    </div>
 {% endblock %}
-</body>
-</html>

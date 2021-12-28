@@ -4,7 +4,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
 from django.db import connection
 from deploy_app.models import HostList
+from deploy_app.models import InstallServer
 from . import forms
+import paramiko
+
 
 
 class IndexView(TemplateView):
@@ -30,14 +33,33 @@ class AddHostList(HostListView, View):
         cursor = connection.cursor()
         form = forms.HostListForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
             cursor.execute("SET @i=0;")
             cursor.execute("UPDATE `deploy_app_hostlist` SET `id`=(@i:=@i+1);")
             cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
+            form.save()
             return redirect("/hostlist")
         else:
             return HttpResponse(form.errors)
 
+class HostTestConnectView(View):
+
+    def post(self, request, *args, **kwargs):
+        form = forms.HostListForm(request.POST)
+
+        if form.is_valid():
+            ip = form.cleaned_data['host_ip']
+            username = form.cleaned_data['host_user']
+            password = form.cleaned_data['host_password']
+            port = form.cleaned_data['host_port']
+            try:
+                client = paramiko.SSHClient()
+                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                client.connect(ip, port, username=username, password=password, timeout=1)
+                return HttpResponse('{"status": "success",  "msg": "连接成功"}', content_type="application/json")
+            except Exception as e:
+                print(e)
+                return HttpResponse('{"status": "failure", "msg": "连接失败"}', content_type="application/json")
+        return HttpResponse(form.is_valid())
 
 class HostListUpdateView(UpdateView):
     model = HostList
@@ -83,9 +105,13 @@ def Deploy(request):
     return render(request, 'Deploy.html')
 
 
-def Install(request):
-    return render(request, 'Install.html')
-
+class InstallView(ListView):
+    model = InstallServer
+    template_name = 'Install.html'
+    context_object_name = 'hoststatus'
+    # def get_queryset(self):
+    #     hoststatus = InstallServer.objects.filter(host_id_id__id = 4)
+    #     return  hoststatus
 
 def Monitor(request):
     return render(request, 'Monitor.html')
@@ -93,6 +119,9 @@ def Monitor(request):
 
 def Site(request):
     return render(request, 'Site.html')
+
+def Bootstrap(request):
+    return render(request, 'bootstrap-test.html')
 
 
 def test1(request, y, m, d):

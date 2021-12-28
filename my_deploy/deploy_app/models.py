@@ -17,9 +17,16 @@ class HostList(models.Model):
         verbose_name = '主机列表'
         verbose_name_plural = verbose_name
 
-
     def __str__(self):
         return '%s,%s,%s,%s,%s'%(self.host_name, self.host_ip, self.host_user, self.host_password, self.host_port)
+
+
+
+class InstallServer(models.Model):
+    host_status = models.IntegerField('主机状态', default=0)
+    install_server = models.CharField('安装服务', max_length=200)
+    host_id = models.ForeignKey(HostList, on_delete=models.CASCADE)
+
 
 class Test(models.Model):
     t1 = models.CharField(max_length=10)

@@ -9,9 +9,9 @@
 
         {% endblock %}
     </div>
+
     <div id="content" class="content">
         {% block hostlist_content %}
-
 
             <button class="add_but" onclick="document.getElementById('add_content').style.display='block';
     document.getElementById('fade').style.display='block';">
@@ -49,9 +49,10 @@
                             </td>
                             <td>
                                 <a class="edit" href="{% url 'deploy_app:hostListUpdate' list.id %}">编辑</a> |
-{#                                <a class="del" href="#" data-method="POST"#}
-{#                                   data-url="{% url 'deploy_app:hostListDelete' list.id %}" data-confirm="确定删除吗？">删除</a>#}
-                                <a class="del" href="/hostlist/delete?host_id={{ list.id }}" data-confirm="确定删除吗？">删除</a>
+                                {#                                <a class="del" href="#" data-method="POST"#}
+                                {#                                   data-url="{% url 'deploy_app:hostListDelete' list.id %}" data-confirm="确定删除吗？">删除</a>#}
+                                <a class="del" href="/hostlist/delete?host_id={{ list.id }}"
+                                   onclick="if(confirm('确定删除?')==false)return false;">删除</a>
 
                             </td>
                         </tr>
@@ -78,7 +79,7 @@
                 <div class="line">
                     <span class="t_name">主机名称：</span>
                     <div class="info-r">
-                        {{ form.host_name }}
+                        {{ form.host_name }} {{ form.host_name.erros.0 }}
                     </div>
                 </div>
                 <div class="line">
@@ -123,7 +124,8 @@
 
                 </div>
                 <div class="test_but">
-                    <button id="test" type="button">测试连接</button>
+                    <button id="test_connect" type="button">测试连接</button>
+                    <span id="connect_info"></span>
                 </div>
             </div>
             <div class="add_bottom">
@@ -158,6 +160,24 @@
                     return form;
                 }
                 return false;
+            })
+        })
+        $(function () {
+            $('#test_connect').on('click', function () {
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url  'deploy_app:hostTestConnect' %}",
+                    data: $('#form_data').serialize(),
+                    async: true,
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            $('#connect_info').html(data.msg)
+                        } else if (data.status == 'failure') {
+                            $('#connect_info').html(data.msg)
+                        }
+                    }
+                })
             })
         })
     </script>

@@ -82,9 +82,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'oam_db',
         'USER': 'root',
-        'PASSWORD': 'admin@123',
-        'HOST': '192.168.1.65',
-        # 'HOST': '127.0.0.1',
+        # 'PASSWORD': 'admin@123',
+        'PASSWORD': 'Admin@123456',
+        # 'HOST': '192.168.1.65',
+        'HOST': '202.74.1.77',
         'PORT': '3306',
 
     }
