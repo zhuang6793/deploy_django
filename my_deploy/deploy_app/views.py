@@ -111,15 +111,15 @@ class InstallView(ListView):
     context_object_name = 'hoststatus'
     def get_queryset(self):
         hoststatus = InstallServer.objects.filter().all()
-        for i in hoststatus.get().host_id:
-            try:
-                client = paramiko.SSHClient()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                client.connect(i.host_ip, i.host_port, username=i.host_user, password=i.host_password, timeout=1)
-            except Exception as e:
-                print(e)
-
-        return  hoststatus
+        # for i in hoststatus.get():
+        #     try:
+        #         client = paramiko.SSHClient()
+        #         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        #         client.connect(i.host_ip, i.host_port, username=i.host_user, password=i.host_password, timeout=1)
+        #     except Exception as e:
+        #         print(e)
+        # return hoststatus
+        print(hoststatus.get())
 
 class get_service_status(View):
     def post(self, request, *args, **kwargs):
@@ -134,7 +134,7 @@ def Site(request):
     return render(request, 'Site.html')
 
 def Bootstrap(request):
-    return render(request, 'bootstrap-test.html')
+    return render(request, 'bootstrap-index.html')
 
 
 def test1(request, y, m, d):
