@@ -3,15 +3,17 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
 from django.db import connection
-from deploy_app.models import HostList
-from deploy_app.models import InstallServer
+from .models import HostList
+from .models import InstallServer
 from . import forms
 import paramiko
 
 
 
+
+
 class IndexView(TemplateView):
-    template_name = 'index.html'
+    template_name = 'index/index.html'
 
 
 class HostListView(ListView):
@@ -134,7 +136,7 @@ def Site(request):
     return render(request, 'Site.html')
 
 def Bootstrap(request):
-    return render(request, 'bootstrap-index.html')
+    return render(request, 'public/layout.html')
 
 
 def test1(request, y, m, d):
