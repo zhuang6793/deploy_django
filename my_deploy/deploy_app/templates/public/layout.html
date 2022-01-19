@@ -106,6 +106,13 @@
 </html>
 
 <script>
+      $(document).ready(function(){
+            var active_node = $("#side-menu a[href='{{ request.path }}']");
+            active_node.parent().addClass("active");
+            if (active_node.parent().parent().hasClass("collapse")){
+                active_node.parent().parent().addClass("in");
+            }
+            });
     /*
 {#window.nps = { "web_base_url":   }#}
     googleTranslateElementInit()
