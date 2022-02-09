@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
 from django.db import connection
 from .models import HostList
@@ -15,6 +15,16 @@ import paramiko
 class IndexView(TemplateView):
     template_name = 'index/index.html'
 
+
+class ClientListView(TemplateView):
+    template_name = 'client/list.html'
+
+class GetClientListView(ClientListView, View):
+    def post(self, request, *args, **kwargs):
+        stuss  = HostList.objects.all().values()
+        students = list(stuss)
+
+        return JsonResponse({'code': 200, 'rows': students, 'total': len(students)})
 
 class HostListView(ListView):
     model = HostList

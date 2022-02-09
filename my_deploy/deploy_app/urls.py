@@ -20,7 +20,8 @@ urlpatterns = [
     path(r'monitor/', views.Monitor, name='monitor'),
     path(r'site/', views.Site, name='site'),
     path(r'bootstrap/', views.Bootstrap, name='site'),
-    path(r'index/', views.IndexView.as_view(), name='index')
+    path(r'index/', views.IndexView.as_view(), name='index'),
+    path(r'client/list', views.GetClientListView.as_view(), name='list')
 ]
 
 urlpatterns += staticfiles_urlpatterns()
