@@ -2,18 +2,49 @@
 {% block content %}
     <div class="wrapper wrapper-content">
         <div class="row">
-            <div class="col-lg-3">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5 langtag="word-connectionport"></h5>
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>主机数量</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">0</h1>
+                    </div>
                 </div>
-                <div class="ibox-content">
-                    <h1 class="no-margins">仪表盘</h1>
-                   {{ request.get_full_path }}
-                    {{ request.path }}
+            </div>
+
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>在线主机</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">0</h1>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>系统信息</h5>
+                    </div>
+                    <div class="ibox-content">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>流量统计</h5>
+                    </div>
+                    <div class="ibox-content">
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

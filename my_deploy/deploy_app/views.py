@@ -18,7 +18,7 @@ class IndexView(TemplateView):
 
 class HostListView(ListView):
     model = HostList
-    template_name = 'HostList.html'
+    template_name = 'client/list.html'
     context_object_name = "hostlist"
 
     def get_context_data(self, *, object_list=None, **kwargs):

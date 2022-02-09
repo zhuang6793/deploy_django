@@ -45,27 +45,27 @@
                     <div class="logo-element">O&M</div>
                 </li>
                 <li>
-                    <a href="{%  url "deploy_app:index" %}"><i class="fa fa-tachometer-alt fa-lg"></i>
+                    <a href="/"><i class="fa fa-tachometer-alt fa-lg"></i>
                         <span class="nav-label">仪表盘</span></a>
                 </li>
                 <li>
-                    <a href="/bootstrap/"><i class="fa fa-desktop fa-lg"></i>
+                    <a href="{%  url "deploy_app:hostList" %}"><i class="fa fa-desktop fa-lg"></i>
                         <span class="nav-label">主机列表</span></a>
                 </li>
                 <li>
-                    <a href="/"><i class="fa fa-wrench fa-lg"></i>
+                    <a href="{%  url "deploy_app:index" %}"><i class="fa fa-wrench fa-lg"></i>
                         <span class="nav-label">部署</span></a>
                 </li>
                 <li>
-                    <a href="/"><i class="fa fa-edit fa-lg"></i>
+                    <a href="{%  url "deploy_app:index" %}"><i class="fa fa-edit fa-lg"></i>
                         <span class="nav-label">安装</span></a>
                 </li>
                 <li>
-                    <a href="/"><i class="fa fa-heartbeat fa-lg"></i>
+                    <a href="{%  url "deploy_app:index" %}"><i class="fa fa-heartbeat fa-lg"></i>
                         <span class="nav-label">监控</span></a>
                 </li>
                 <li>
-                    <a href="/"><i class="fa fa-cog fa-lg"></i>
+                    <a href="{%  url "deploy_app:index" %}"><i class="fa fa-cog fa-lg"></i>
                         <span class="nav-label">设置</span></a>
                 </li>
             </ul>
@@ -109,9 +109,9 @@
       $(document).ready(function(){
             var active_node = $("#side-menu a[href='{{ request.path }}']");
             active_node.parent().addClass("active");
-            if (active_node.parent().parent().hasClass("collapse")){
+            /*if (active_node.parent().parent().hasClass("collapse")){
                 active_node.parent().parent().addClass("in");
-            }
+            }*/
             });
     /*
 {#window.nps = { "web_base_url":   }#}
