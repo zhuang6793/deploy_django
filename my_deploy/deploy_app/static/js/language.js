@@ -139,6 +139,7 @@ function langreply(langstr) {
 }
 
 function submitform(action, url, postdata) {
+	var formdata = new FormData(postdata)
     postsubmit = false;
     switch (action) {
         case 'start':
@@ -153,9 +154,9 @@ function submitform(action, url, postdata) {
             $.ajax({
                 type: "POST",
                 url: url,
-                data: postdata,
+                data: formdata,
                 success: function (res) {
-                    alert(langreply(res.msg));
+                       alert(res.msg);
                     if (res.status) {
                         if (postsubmit) {document.location.reload();}else{history.back(-1);}
                     }

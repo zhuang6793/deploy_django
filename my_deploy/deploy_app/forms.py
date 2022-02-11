@@ -30,5 +30,6 @@ class HostListForm(ModelForm):
             "host_name": {"required": "主机名不能为空"},
             "host_ip": {"required": "IP地址不能为空"},
             "host_user": {"required": "用户名不能为空"},
-            "host_port": {"required": "端口不能为空"},
+            # "host_port": {"required": "端口不能为空"},
+            "host_port": {"asd": "端口不能为空"},
         }

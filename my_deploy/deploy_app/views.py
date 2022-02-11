@@ -5,11 +5,10 @@ from django.views.generic import TemplateView, View, ListView, UpdateView, Delet
 from django.db import connection
 from .models import HostList
 from .models import InstallServer
+from django.core import serializers
 from . import forms
 import paramiko
-
-
-
+import json
 
 
 class IndexView(TemplateView):
@@ -19,12 +18,25 @@ class IndexView(TemplateView):
 class ClientListView(TemplateView):
     template_name = 'client/list.html'
 
+
+class AddTempView(TemplateView):
+    template_name = 'client/add.html'
+
+
 class GetClientListView(ClientListView, View):
     def post(self, request, *args, **kwargs):
-        stuss  = HostList.objects.all().values()
+        stuss = HostList.objects.all().values()
         students = list(stuss)
-
         return JsonResponse({'code': 200, 'rows': students, 'total': len(students)})
+
+
+class hostlist(View):
+
+    def get(self, request, *args, **kwargs):
+        list = HostList.objects.all()
+        result_serialize = serializers.serialize('json', list)
+        return HttpResponse(result_serialize, "application/json")
+
 
 class HostListView(ListView):
     model = HostList
@@ -39,7 +51,7 @@ class HostListView(ListView):
         return context
 
 
-class AddHostList(HostListView, View):
+class AddHostList(AddTempView, View):
 
     def post(self, request, *args, **kwargs):
         cursor = connection.cursor()
@@ -49,9 +61,10 @@ class AddHostList(HostListView, View):
             cursor.execute("UPDATE `deploy_app_hostlist` SET `id`=(@i:=@i+1);")
             cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
             form.save()
-            return redirect("/hostlist")
+            return HttpResponse('{"status": "true", "msg": "添加成功"}', content_type="application/json")
         else:
             return HttpResponse(form.errors)
+
 
 class HostTestConnectView(View):
 
@@ -72,6 +85,7 @@ class HostTestConnectView(View):
                 print(e)
                 return HttpResponse('{"status": "failure", "msg": "连接失败"}', content_type="application/json")
         return HttpResponse(form.is_valid())
+
 
 class HostListUpdateView(UpdateView):
     model = HostList
@@ -105,6 +119,7 @@ class DeleteView(View):
         h1.save()
         return HttpResponseRedirect('/hostlist')
 
+
 def Dashboard(request):
     return render(request, 'Dashboard.html')
 
@@ -121,6 +136,7 @@ class InstallView(ListView):
     model = InstallServer
     template_name = 'Install.html'
     context_object_name = 'hoststatus'
+
     def get_queryset(self):
         hoststatus = InstallServer.objects.filter().all()
         # for i in hoststatus.get():
@@ -133,6 +149,7 @@ class InstallView(ListView):
         # return hoststatus
         print(hoststatus.get())
 
+
 class get_service_status(View):
     def post(self, request, *args, **kwargs):
         pass
@@ -144,6 +161,7 @@ def Monitor(request):
 
 def Site(request):
     return render(request, 'Site.html')
+
 
 def Bootstrap(request):
     return render(request, 'public/layout.html')

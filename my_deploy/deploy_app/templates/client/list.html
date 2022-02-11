@@ -36,6 +36,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
@@ -83,20 +84,20 @@
                     visible: true//false表示不显示
                 },
                 {
+                    field: 'host_ip',//域值
+                    title: '<span>客户端地址</span>',//标题
+                    halign: 'center',
+                    visible: true//false表示不显示
+                },
+                {
                     field: 'host_name',//域值
                     title: '<span>主机名</span>',//标题
                     halign: 'center',
                     visible: true//false表示不显示
                 },
                 {
-                    field: 'host_ip',//域值
-                    title: '<span>客户端地址</span>',//标题
-                    halign: 'center',
-                    visible: true//false表示不显示
-                },
-                 {
                     field: 'host_port',//域值
-                    title: '<span>端口</span>',//标题
+                    title: '<span>客户端端口</span>',//标题
                     halign: 'center',
                     visible: true//false表示不显示
                 },
@@ -117,7 +118,6 @@
                         return btn_group
                     }
                 },
-
             ]
         });
     </script>
