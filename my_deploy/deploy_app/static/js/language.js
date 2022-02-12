@@ -138,9 +138,14 @@ function langreply(langstr) {
     return langobj
 }
 
-function submitform(action, url, postdata) {
-	var formdata = new FormData(postdata)
+function submitform(action, url, postdata, filedata) {
     postsubmit = false;
+    var fromData = new FormData();
+    $.each( postdata, function(i, field) {
+		fromData.append(field.name, field.value)
+	})
+	fromData.append("host_key_file", filedata[0])
+	var data = fromData;
     switch (action) {
         case 'start':
         case 'stop':
@@ -154,7 +159,9 @@ function submitform(action, url, postdata) {
             $.ajax({
                 type: "POST",
                 url: url,
-                data: formdata,
+                data: data,
+				processData: false,
+				contentType: false,
                 success: function (res) {
                        alert(res.msg);
                     if (res.status) {

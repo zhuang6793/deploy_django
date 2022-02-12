@@ -19,8 +19,14 @@ class ClientListView(TemplateView):
     template_name = 'client/list.html'
 
 
-class AddTempView(TemplateView):
+class AddTempView(TemplateView, View):
     template_name = 'client/add.html'
+    def get_context_data(self, **kwargs):
+        form = forms.HostListForm()
+        context = super(AddTempView, self).get_context_data(**kwargs)
+        context['form'] = form
+        return context
+
 
 
 class GetClientListView(ClientListView, View):
@@ -31,7 +37,6 @@ class GetClientListView(ClientListView, View):
 
 
 class hostlist(View):
-
     def get(self, request, *args, **kwargs):
         list = HostList.objects.all()
         result_serialize = serializers.serialize('json', list)
@@ -60,10 +65,11 @@ class AddHostList(AddTempView, View):
             cursor.execute("SET @i=0;")
             cursor.execute("UPDATE `deploy_app_hostlist` SET `id`=(@i:=@i+1);")
             cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
+            print(form.cleaned_data['host_key_file'])
             form.save()
             return HttpResponse('{"status": "true", "msg": "添加成功"}', content_type="application/json")
         else:
-            return HttpResponse(form.errors)
+            return HttpResponse(form.errors.as_json())
 
 
 class HostTestConnectView(View):
