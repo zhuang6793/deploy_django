@@ -54,9 +54,10 @@
             pagination: true,//分页
             sidePagination: 'server',//服务器端分页
             pageNumber: 1,
+            pageSize: 5,
             pageList: [5, 10, 20, 50],//分页步进值
             detailView: false,
-            smartDisplay: false, // 智能显示 pagination 和 cardview 等
+            smartDisplay: true, // 智能显示 pagination 和 cardview 等
             onExpandRow: function () {
                 $('body').setLang('.detail-view');
             },
@@ -102,6 +103,20 @@
                     visible: true//false表示不显示
                 },
                 {
+                field: 'Status',//域值
+                title: '<span>状态</span>',//内容
+                align: 'center',
+                halign: 'center',
+                visible: true,//false表示不显示
+                formatter: function (value, row, index) {
+                    if (value) {
+                        return '<span class="badge badge-primary" langtag="word-open"></span>'
+                    } else {
+                        return '<span class="badge badge-badge" langtag="word-close"></span>'
+                    }
+                }
+            },
+                {
                     field: 'option',//域值
                     title: '<span>选项</span>',//内容
                     align: 'center',
@@ -109,8 +124,8 @@
                     visible: true,//false表示不显示
                     formatter: function (value, row, index) {
                         btn_group = '<div class="btn-group">'
-                        btn_group += '<a onclick="submitform(\'delete\', \'/client/del\', {\'id\':' + row.id
-                        btn_group += '})" class="btn btn-outline btn-danger"><i class="fa fa-trash"></i></a>'
+                        btn_group += '<a onclick="submitform(\'delete\', \'/client/del/\', {\'id\':' + row.id
+                        btn_group += '}, \'\')" class="btn btn-outline btn-danger"><i class="fa fa-trash"></i></a>'
                         btn_group += '<a href="/client/edit?id=' + row.id
                         btn_group += '" class="btn btn-outline btn-success"><i class="fa fa-edit"></i></a></div>'
                         return btn_group

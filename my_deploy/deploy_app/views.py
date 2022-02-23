@@ -3,8 +3,8 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
 from django.db import connection
-from .models import HostList
-from .models import InstallServer
+from .models import HostList, InstallServer
+
 from django.core import serializers
 from . import forms
 import paramiko
@@ -28,12 +28,20 @@ class AddTempView(TemplateView, View):
         return context
 
 
-
 class GetClientListView(ClientListView, View):
     def post(self, request, *args, **kwargs):
-        stuss = HostList.objects.all().values()
-        students = list(stuss)
-        return JsonResponse({'code': 200, 'rows': students, 'total': len(students)})
+        search = request.POST
+        pageSize =  int(search.get('limit'))
+        pageNumber = (int(search.get('offset')) / pageSize) + 1
+        right_boundary = pageSize * pageNumber
+        print(pageNumber, pageSize, right_boundary)
+        print(type(HostList.objects.all()))
+        articles = HostList.objects.all()[(pageNumber-1)*pageSize:right_boundary]
+        total = HostList.objects.all().count()
+        rows = []
+        for article in articles:
+            rows.append({'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip, 'host_name': article.host_name, 'host_port': article.host_port})
+        return JsonResponse({'code': 200, 'rows': rows, 'total': total})
 
 
 class hostlist(View):
@@ -65,11 +73,20 @@ class AddHostList(AddTempView, View):
             cursor.execute("SET @i=0;")
             cursor.execute("UPDATE `deploy_app_hostlist` SET `id`=(@i:=@i+1);")
             cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
-            print(form.cleaned_data['host_key_file'])
             form.save()
             return HttpResponse('{"status": "true", "msg": "添加成功"}', content_type="application/json")
         else:
             return HttpResponse(form.errors.as_json())
+
+class DelHostList(View):
+    def post(self, request):
+        data = request.POST
+        try:
+            list = HostList.objects.filter(id = data['id'])
+            list.delete()
+            return HttpResponse('{"status": "true", "msg": "删除成功"}', content_type="application/json")
+        except Exception as e:
+            return HttpResponse('{"status": "false", "msg": "%s"}'%e, content_type="application/json")
 
 
 class HostTestConnectView(View):
@@ -91,6 +108,7 @@ class HostTestConnectView(View):
                 print(e)
                 return HttpResponse('{"status": "failure", "msg": "连接失败"}', content_type="application/json")
         return HttpResponse(form.is_valid())
+
 
 
 class HostListUpdateView(UpdateView):
@@ -183,3 +201,13 @@ def test1(request, y, m, d):
     print(request.META['REMOTE_ADDR'])
 
     return render(request, 'asd.html', {"y": y, "m": m, "d": d})
+
+
+def HostConnect(ip, username, password, port):
+    try:
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(ip, port, username=username, password=password, timeout=1)
+        return True
+    except Exception as e:
+        return False
