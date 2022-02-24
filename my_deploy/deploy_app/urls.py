@@ -23,7 +23,8 @@ urlpatterns = [
     path(r'index/', views.IndexView.as_view(), name='index'),
     path(r'client/list', views.GetClientListView.as_view(), name='list'),
     path(r'client/add', views.AddHostList.as_view(), name='add'),
-    path(r'client/del/', views.DelHostList.as_view(), name='del')
+    path(r'client/del/', views.DelHostList.as_view(), name='del'),
+    path(r'client/edit', views.EditHostList.as_view(), name='edit')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

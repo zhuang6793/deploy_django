@@ -40,6 +40,7 @@
     </div>
 
     <script>
+        $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['zh-CN']);
         /*bootstrap table*/
         $('#table').bootstrapTable({
             toolbar: "#toolbar",
@@ -58,12 +59,6 @@
             pageList: [5, 10, 20, 50],//分页步进值
             detailView: false,
             smartDisplay: true, // 智能显示 pagination 和 cardview 等
-            onExpandRow: function () {
-                $('body').setLang('.detail-view');
-            },
-            onPostBody: function (data) {
-                if ($(this)[0].locale != undefined) $('body').setLang('#table');
-            },
             //表格的列
             columns: [
                 {

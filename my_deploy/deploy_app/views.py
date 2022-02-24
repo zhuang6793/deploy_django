@@ -14,10 +14,8 @@ import json
 class IndexView(TemplateView):
     template_name = 'index/index.html'
 
-
 class ClientListView(TemplateView):
     template_name = 'client/list.html'
-
 
 class AddTempView(TemplateView, View):
     template_name = 'client/add.html'
@@ -34,8 +32,6 @@ class GetClientListView(ClientListView, View):
         pageSize =  int(search.get('limit'))
         pageNumber = (int(search.get('offset')) / pageSize) + 1
         right_boundary = pageSize * pageNumber
-        print(pageNumber, pageSize, right_boundary)
-        print(type(HostList.objects.all()))
         articles = HostList.objects.all()[(pageNumber-1)*pageSize:right_boundary]
         total = HostList.objects.all().count()
         rows = []
@@ -65,7 +61,6 @@ class HostListView(ListView):
 
 
 class AddHostList(AddTempView, View):
-
     def post(self, request, *args, **kwargs):
         cursor = connection.cursor()
         form = forms.HostListForm(request.POST, request.FILES)
@@ -87,6 +82,24 @@ class DelHostList(View):
             return HttpResponse('{"status": "true", "msg": "删除成功"}', content_type="application/json")
         except Exception as e:
             return HttpResponse('{"status": "false", "msg": "%s"}'%e, content_type="application/json")
+
+class EditHostList(View):
+    template_name = 'client/edit.html'
+    form_class = forms.HostListForm
+
+    def get(self, request):
+        id = request.GET.get('id')
+        list = HostList.objects.get(id = id)
+        return render(request, self.template_name, {'list': list})
+
+    def post(self, request, *args, **kwargs):
+        list = HostList.objects.get(id = request.POST.get('id'))
+        form = self.form_class(request.POST, request.FILES, instance= list)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('{"status": "true", "msg": "修改成功"}', content_type="application/json")
+        else:
+            return HttpResponse('{"status": "false", "msg": "修改失败"}', content_type="application/json")
 
 
 class HostTestConnectView(View):

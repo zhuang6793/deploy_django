@@ -37,46 +37,7 @@
         return null;
     }
 
-    function setchartlang(langobj, chartobj) {
-        if ($.type(langobj) == 'string') return langobj;
-        if ($.type(langobj) == 'chartobj') return false;
-        var flag = true;
-        for (key in langobj) {
-            var item = key;
-            children = (chartobj.hasOwnProperty(item)) ? setchartlang(langobj[item], chartobj[item]) : setchartlang(langobj[item], undefined);
-            switch ($.type(children)) {
-                case 'string':
-                    if ($.type(chartobj[item]) != 'string') continue;
-                case 'object':
-                    chartobj[item] = (children['value'] || children);
-                default:
-                    flag = false;
-            }
-        }
-        if (flag) {
-            return {'value': (langobj[languages['current']] || langobj[languages['default']] || 'N/A')}
-        }
-    }
 
-    $.fn.cloudLang = function () {
-        $.ajax({
-            type: 'GET',
-            url: window.nps.web_base_url + '/static/page/languages.xml',
-            dataType: 'xml',
-            success: function (xml) {
-                languages['content'] = xml2json($(xml).children())['content'];
-                languages['menu'] = languages['content']['languages'];
-                languages['default'] = languages['content']['default'];
-                languages['navigator'] = (getCookie('lang') || navigator.language || navigator.browserLanguage);
-                for (var key in languages['menu']) {
-                    $('#languagemenu').next().append('<li lang="' + key + '"><a><img src="' + window.nps.web_base_url + '/static/img/flag/' + key + '.png"> ' + languages['menu'][key] + '</a></li>');
-                    if (key == languages['navigator']) languages['current'] = key;
-                }
-                $('#languagemenu').attr('lang', (languages['current'] || languages['default']));
-                $('body').setLang('');
-            }
-        });
-    };
 
     $.fn.setLang = function (dom) {
         languages['current'] = $('#languagemenu').attr('lang');
@@ -119,14 +80,6 @@
     }
 
 })(jQuery);
-
-$(document).ready(function () {
-    $('body').cloudLang();
-    $('body').on('click', 'li[lang]', function () {
-        $('#languagemenu').attr('lang', $(this).attr('lang'));
-        $('body').setLang('');
-    });
-});
 
 var languages = {};
 var charts = {};
