@@ -21,10 +21,12 @@ urlpatterns = [
     path(r'site/', views.Site, name='site'),
     path(r'bootstrap/', views.Bootstrap, name='site'),
     path(r'index/', views.IndexView.as_view(), name='index'),
-    path(r'client/list', views.GetClientListView.as_view(), name='list'),
+    path(r'client/list', views.ClientListView.as_view(), name='list'),
     path(r'client/add', views.AddHostList.as_view(), name='add'),
     path(r'client/del/', views.DelHostList.as_view(), name='del'),
-    path(r'client/edit', views.EditHostList.as_view(), name='edit')
+    path(r'client/edit', views.EditHostList.as_view(), name='edit'),
+    path(r'client/deploy', views.DeployListView.as_view(), name='deploy'),
+    path(r'client/exec', views.ExecHost.as_view(), name='exec')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

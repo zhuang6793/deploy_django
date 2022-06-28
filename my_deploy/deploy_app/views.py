@@ -14,9 +14,6 @@ import json
 class IndexView(TemplateView):
     template_name = 'index/index.html'
 
-class ClientListView(TemplateView):
-    template_name = 'client/list.html'
-
 class AddTempView(TemplateView, View):
     template_name = 'client/add.html'
     def get_context_data(self, **kwargs):
@@ -25,8 +22,7 @@ class AddTempView(TemplateView, View):
         context['form'] = form
         return context
 
-
-class GetClientListView(ClientListView, View):
+class GetClientListView(View):
     def post(self, request, *args, **kwargs):
         search = request.POST
         pageSize =  int(search.get('limit'))
@@ -38,6 +34,14 @@ class GetClientListView(ClientListView, View):
         for article in articles:
             rows.append({'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip, 'host_name': article.host_name, 'host_port': article.host_port})
         return JsonResponse({'code': 200, 'rows': rows, 'total': total})
+
+
+class ClientListView(TemplateView, GetClientListView):
+    template_name = 'client/list.html'
+
+
+class DeployListView(TemplateView, GetClientListView):
+    template_name = 'client/deploy.html'
 
 
 class hostlist(View):
@@ -73,6 +77,7 @@ class AddHostList(AddTempView, View):
         else:
             return HttpResponse(form.errors.as_json())
 
+
 class DelHostList(View):
     def post(self, request):
         data = request.POST
@@ -83,13 +88,14 @@ class DelHostList(View):
         except Exception as e:
             return HttpResponse('{"status": "false", "msg": "%s"}'%e, content_type="application/json")
 
+
 class EditHostList(View):
     template_name = 'client/edit.html'
     form_class = forms.HostListForm
 
     def get(self, request):
         id = request.GET.get('id')
-        list = HostList.objects.get(id = id)
+        list = HostList.objects.get(id=id)
         return render(request, self.template_name, {'list': list})
 
     def post(self, request, *args, **kwargs):
@@ -100,6 +106,17 @@ class EditHostList(View):
             return HttpResponse('{"status": "true", "msg": "修改成功"}', content_type="application/json")
         else:
             return HttpResponse('{"status": "false", "msg": "修改失败"}', content_type="application/json")
+
+
+class ExecHost(View):
+    template_name = 'client/exec.html'
+    form_class = forms.HostListForm
+
+    def get(self, request):
+        id = request.GET.get('id')
+        list = HostList.objects.get(id=id)
+        return render(request, self.template_name, {'list': list})
+
 
 
 class HostTestConnectView(View):
