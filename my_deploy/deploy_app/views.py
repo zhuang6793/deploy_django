@@ -8,31 +8,87 @@ from .models import HostList, InstallServer
 from django.core import serializers
 from . import forms
 import paramiko
-import json
+import os
+
+cur_path = os.path.dirname(os.path.realpath(__file__))
+
+
+class SshUpload:
+    def __init__(self, ip, port, user, passwd, filename, localpath, remotepath, deppath):
+        self.ip = ip
+        self.port = port
+        self.user = user
+        self.passwd = passwd
+        self.filename = filename
+        self.localpath = self._path(localpath)
+        self.remotepath = self._path(remotepath)
+        self.deppath = self._path(deppath)
+        self.sshClient = self.ssh_client(self.ip, self.port, self.user, self.passwd)
+
+    def ssh_client(self, ip, port, user, passwd):
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=ip, port=port, username=user, password=passwd)
+
+        return client
+
+    def _path(self, path):
+        if path.split('/')[-1] != '':
+            path = path + '/'
+
+        return path
+
+    def sftp_client(self):
+        tran = paramiko.Transport((self.ip, int(self.port)))
+
+        tran.connect(username=self.user, password=self.passwd)
+
+        sftp = paramiko.SFTPClient.from_transport(tran)
+
+        return sftp
+
+    def run(self):
+
+        self.sftp_client().put(localpath=self.localpath+self.filename, remotepath=self.remotepath+self.filename)
+
+        stdin, stdout, stderr = self.sshClient.exec_command(
+                f"sudo mv  {self.remotepath}{self.filename}  {self.deppath}{self.filename.split('.')[0]}  ")
+        print(stdout.readline(), stderr.readline())
+        stdin, stdout, stderr = self.sshClient.exec_command(
+                f"cd  {self.deppath}{self.filename.split('.')[0]}  && sudo unzip -o {self.filename}")
+        print(stdout.readline(), stderr.readline())
+
+
+
 
 
 class IndexView(TemplateView):
     template_name = 'index/index.html'
 
+
 class AddTempView(TemplateView, View):
     template_name = 'client/add.html'
+
     def get_context_data(self, **kwargs):
         form = forms.HostListForm()
         context = super(AddTempView, self).get_context_data(**kwargs)
         context['form'] = form
         return context
 
+
 class GetClientListView(View):
     def post(self, request, *args, **kwargs):
         search = request.POST
-        pageSize =  int(search.get('limit'))
+        pageSize = int(search.get('limit'))
         pageNumber = (int(search.get('offset')) / pageSize) + 1
         right_boundary = pageSize * pageNumber
-        articles = HostList.objects.all()[(pageNumber-1)*pageSize:right_boundary]
+        articles = HostList.objects.all()[(pageNumber - 1) * pageSize:right_boundary]
         total = HostList.objects.all().count()
         rows = []
         for article in articles:
-            rows.append({'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip, 'host_name': article.host_name, 'host_port': article.host_port})
+            rows.append(
+                {'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip,
+                 'host_name': article.host_name, 'host_port': article.host_port})
         return JsonResponse({'code': 200, 'rows': rows, 'total': total})
 
 
@@ -82,11 +138,11 @@ class DelHostList(View):
     def post(self, request):
         data = request.POST
         try:
-            list = HostList.objects.filter(id = data['id'])
+            list = HostList.objects.filter(id=data['id'])
             list.delete()
             return HttpResponse('{"status": "true", "msg": "删除成功"}', content_type="application/json")
         except Exception as e:
-            return HttpResponse('{"status": "false", "msg": "%s"}'%e, content_type="application/json")
+            return HttpResponse('{"status": "false", "msg": "%s"}' % e, content_type="application/json")
 
 
 class EditHostList(View):
@@ -99,8 +155,8 @@ class EditHostList(View):
         return render(request, self.template_name, {'list': list})
 
     def post(self, request, *args, **kwargs):
-        list = HostList.objects.get(id = request.POST.get('id'))
-        form = self.form_class(request.POST, request.FILES, instance= list)
+        list = HostList.objects.get(id=request.POST.get('id'))
+        form = self.form_class(request.POST, request.FILES, instance=list)
         if form.is_valid():
             form.save()
             return HttpResponse('{"status": "true", "msg": "修改成功"}', content_type="application/json")
@@ -117,10 +173,29 @@ class ExecHost(View):
         list = HostList.objects.get(id=id)
         return render(request, self.template_name, {'list': list})
 
+    def post(self, request, *args, **kwargs):
+        localpath = cur_path + '/deploy_file/'
+        list = HostList.objects.get(id=request.POST.get('id'))
+        file = request.FILES.getlist('web_file')
+        plat = request.POST.get('option')
+
+        if not os.path.exists(localpath):
+            os.mkdir(localpath)
+        if plat == '1':
+            for f in file:
+                with open(localpath + f.name, 'wb+') as fs:
+                    for chunk in f.chunks():
+                        fs.write(chunk)
+                        # fs.close()
+                SshUpload(list.host_ip, list.host_port, list.host_user, list.host_password, f.name, localpath,
+                               list.des_path, list.dep_path).run()
+        elif plat == '2':
+            pass
+
+        return HttpResponse('{"status": "true", "msg": "成功"}', content_type="application/json")
 
 
 class HostTestConnectView(View):
-
     def post(self, request, *args, **kwargs):
         form = forms.HostListForm(request.POST)
 
@@ -138,7 +213,6 @@ class HostTestConnectView(View):
                 print(e)
                 return HttpResponse('{"status": "failure", "msg": "连接失败"}', content_type="application/json")
         return HttpResponse(form.is_valid())
-
 
 
 class HostListUpdateView(UpdateView):
@@ -172,18 +246,6 @@ class DeleteView(View):
         h1.is_active = False
         h1.save()
         return HttpResponseRedirect('/hostlist')
-
-
-def Dashboard(request):
-    return render(request, 'Dashboard.html')
-
-
-def asd(request):
-    return render(request, 'asd.html')
-
-
-def Deploy(request):
-    return render(request, 'Deploy.html')
 
 
 class InstallView(ListView):
@@ -220,24 +282,3 @@ def Site(request):
 def Bootstrap(request):
     return render(request, 'public/layout.html')
 
-
-def test1(request, y, m, d):
-    print(request.COOKIES)
-    print(request.session)
-    print(request.body)
-    print(request.scheme)
-    print(request.path_info)
-    print(request.get_full_path())
-    print(request.META['REMOTE_ADDR'])
-
-    return render(request, 'asd.html', {"y": y, "m": m, "d": d})
-
-
-def HostConnect(ip, username, password, port):
-    try:
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(ip, port, username=username, password=password, timeout=1)
-        return True
-    except Exception as e:
-        return False

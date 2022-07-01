@@ -6,7 +6,8 @@ from django.forms import widgets as wdt
 class HostListForm(ModelForm):
     class Meta:
         model = models.HostList
-        fields = ('host_name', 'host_ip', 'domain', 'host_user', 'host_password', 'host_port', 'host_key_file')
+        fields = ('host_name', 'host_ip', 'domain', 'host_user', 'host_password', 'host_port', 'des_path', 'dep_path',
+                  'host_key_file')
         # labels = {
         #     'host_name': '主机名称',
         #     'host_ip': 'IP地址',
@@ -23,6 +24,8 @@ class HostListForm(ModelForm):
             'host_user': wdt.TextInput(attrs={"class": "form-control"}),
             'host_password': wdt.PasswordInput(render_value=True, attrs={"class": "form-control"}),
             'host_port': wdt.TextInput(attrs={"class": "form-control"}),
+            'des_path': wdt.TextInput(attrs={"class": "form-control"}),
+            'dep_path': wdt.TextInput(attrs={"class": "form-control"}),
             'host_key_file': wdt.FileInput(attrs={"class": "form-control"})
         }
 
@@ -34,3 +37,4 @@ class HostListForm(ModelForm):
             "host_user": {"required": "用户名不能为空"},
             "host_port": {"required": "端口不能为空"},
         }
+

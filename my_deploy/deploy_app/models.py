@@ -11,6 +11,8 @@ class HostList(models.Model):
     host_port = models.IntegerField('端口', default=22)
     host_key_file = models.FileField('密钥', upload_to='key_file', null=True, blank=True)
     domain = models.CharField('域名', max_length=200, null=True, blank=True)
+    des_path = models.CharField('目标路径', max_length=200, null=True)
+    dep_path = models.CharField('部署路径', max_length=200, null=True)
     is_active = models.BooleanField('是否活跃', default=True)
 
     class Meta:
@@ -18,8 +20,7 @@ class HostList(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return '%s,%s,%s,%s,%s'%(self.host_name, self.host_ip, self.host_user, self.host_password, self.host_port)
-
+        return '%s,%s,%s,%s,%s' % (self.host_name, self.host_ip, self.host_user, self.host_password, self.host_port)
 
 
 class InstallServer(models.Model):
@@ -33,6 +34,5 @@ class Test(models.Model):
     t2 = models.CharField(max_length=10)
     num = models.IntegerField(max_length=50, default=0)
 
-
     def __str__(self):
-        return '%s,%s,%s'%(self.t1, self.t2, self.num)
+        return '%s,%s,%s' % (self.t1, self.t2, self.num)
