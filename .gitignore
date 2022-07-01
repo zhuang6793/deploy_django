@@ -1,3 +1,4 @@
 deploy_app/migrations
 /my_deploy/key_file/
 /venv/
+deploy_app/deploy_file
