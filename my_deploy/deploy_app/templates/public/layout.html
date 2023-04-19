@@ -138,9 +138,15 @@ function displayHideUI(){
             }
 
         }
-function addFile(){
+function addFile(info){
+        if (info == 'web') {
             var div = document.getElementById("deploy_file");
             div.innerHTML += "<div class='col-sm-10'><input class='form-control'  type='file' name='web_file' placeholder=''></div>";
+            }
+        if (info == 'be'){
+            var div = document.getElementById("be_file");
+            div.innerHTML += "<div class='col-sm-10'><input class='form-control'  type='file' name='be_file' placeholder=''></div>";
+            }
 }
 
 
