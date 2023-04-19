@@ -21,7 +21,7 @@
 
                         <div class="table-responsive">
                             <div id="toolbar">
-                                <a href="/client/add" class="btn btn-primary dim">
+                                <a href="{% url "deploy_app:add" %}" class="btn btn-primary dim">
                                     <i class="fa fa-fw fa-lg fa-plus"></i> <span>新增</span></a>
                             </div>
                             <table id="taskList_table" class="table-striped table-hover"
@@ -98,19 +98,12 @@
                     visible: true//false表示不显示
                 },
                 {
-                field: 'Status',//域值
-                title: '<span>状态</span>',//内容
-                align: 'center',
-                halign: 'center',
-                visible: true,//false表示不显示
-                formatter: function (value, row, index) {
-                    if (value) {
-                        return '<span class="badge badge-primary" langtag="word-open"></span>'
-                    } else {
-                        return '<span class="badge badge-badge" langtag="word-close"></span>'
-                    }
-                }
-            },
+                    field: 'Status',//域值
+                    title: '<span>状态</span>',//内容
+                    halign: 'center',
+                    visible: true,//false表示不显示
+
+                },
                 {
                     field: 'option',//域值
                     title: '<span>选项</span>',//内容
@@ -119,9 +112,9 @@
                     visible: true,//false表示不显示
                     formatter: function (value, row, index) {
                         btn_group = '<div class="btn-group">'
-                        btn_group += '<a onclick="submitform(\'delete\', \'/client/del/\', {\'id\':' + row.id
+                        btn_group += '<a onclick="submitform(\'delete\', \'{% url "deploy_app:del" %}\', {\'id\':' + row.id
                         btn_group += '}, \'\')" class="btn btn-outline btn-danger"><i class="fa fa-trash"></i></a>'
-                        btn_group += '<a href="/client/edit?id=' + row.id
+                        btn_group += '<a href="{% url 'deploy_app:edit' %}?id=' + row.id
                         btn_group += '" class="btn btn-outline btn-success"><i class="fa fa-edit"></i></a></div>'
                         return btn_group
                     }
