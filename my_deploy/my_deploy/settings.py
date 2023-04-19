@@ -83,10 +83,10 @@ DATABASES = {
         'NAME': 'oam_db',
         'USER': 'root',
         # 'PASSWORD': 'admin@123',
-        'PASSWORD': 'Admin@123456',
+        'PASSWORD': 'root',
         # 'HOST': '192.168.1.65',
-        'HOST': '202.74.1.77',
-        'PORT': '3306',
+        'HOST': 'nps.newsupplytech.com',
+        'PORT': '1206',
 
     }
 }

@@ -6,7 +6,7 @@ from . import views
 app_name = 'deploy_app'
 
 urlpatterns = [
-    path(r'', views.IndexView.as_view(), name='index'),
+    # path(r'', views.IndexView.as_view(), name='index'),
     # path(r'dashboard/', views.Dashboard, name='dashboard'),
     # path(r'deploy/', views.Deploy, name='deploy'),
     path(r'hostlist/', views.AddHostList.as_view(), name='hostList'),

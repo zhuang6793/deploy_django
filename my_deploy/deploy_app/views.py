@@ -2,15 +2,33 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import connection
 from .models import HostList, InstallServer
 
 from django.core import serializers
 from . import forms
 import paramiko
-import os
+import os, platform
+import subprocess
 
 cur_path = os.path.dirname(os.path.realpath(__file__))
+
+
+def server_status(ip_address):
+    os_name = platform.system()
+
+    if os_name == 'Windows':
+        response = subprocess.Popen("ping -n 1 -w 100 %s " % ip_address, stdout=subprocess.PIPE)
+    else:
+        response = subprocess.Popen("ping -c 1 -w 100 %s" % ip_address, stdout=subprocess.PIPE)
+
+    if response.wait() == 0:
+        status = 'Online'
+    else:
+        status = 'Offline'
+
+    return status
 
 
 class SshUpload:
@@ -48,25 +66,23 @@ class SshUpload:
         return sftp
 
     def run(self):
-
-        self.sftp_client().put(localpath=self.localpath+self.filename, remotepath=self.remotepath+self.filename)
+        self.sftp_client().put(localpath=self.localpath + self.filename, remotepath=self.remotepath + self.filename)
 
         stdin, stdout, stderr = self.sshClient.exec_command(
-                f"sudo mv  {self.remotepath}{self.filename}  {self.deppath}{self.filename.split('.')[0]}  ")
+            f"sudo mv  {self.remotepath}{self.filename}  {self.deppath}{self.filename.split('.')[0]}  ")
         print(stdout.readline(), stderr.readline())
         stdin, stdout, stderr = self.sshClient.exec_command(
-                f"cd  {self.deppath}{self.filename.split('.')[0]}  && sudo unzip -o {self.filename}")
+            f"cd  {self.deppath}{self.filename.split('.')[0]}  && sudo unzip -o {self.filename}")
         print(stdout.readline(), stderr.readline())
 
 
-
-
-
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, TemplateView):
+    login_url = '/login/'
     template_name = 'index/index.html'
 
 
-class AddTempView(TemplateView, View):
+class AddTempView(LoginRequiredMixin, TemplateView, View):
+    login_url = '/login/'
     template_name = 'client/add.html'
 
     def get_context_data(self, **kwargs):
@@ -76,7 +92,9 @@ class AddTempView(TemplateView, View):
         return context
 
 
-class GetClientListView(View):
+class GetClientListView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def post(self, request, *args, **kwargs):
         search = request.POST
         pageSize = int(search.get('limit'))
@@ -88,7 +106,8 @@ class GetClientListView(View):
         for article in articles:
             rows.append(
                 {'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip,
-                 'host_name': article.host_name, 'host_port': article.host_port})
+                 'host_name': article.host_name, 'host_port': article.host_port,
+                 'Status': server_status(article.host_ip)})
         return JsonResponse({'code': 200, 'rows': rows, 'total': total})
 
 
@@ -100,14 +119,17 @@ class DeployListView(TemplateView, GetClientListView):
     template_name = 'client/deploy.html'
 
 
-class hostlist(View):
+class hostlist(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def get(self, request, *args, **kwargs):
         list = HostList.objects.all()
         result_serialize = serializers.serialize('json', list)
         return HttpResponse(result_serialize, "application/json")
 
 
-class HostListView(ListView):
+class HostListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = HostList
     template_name = 'client/list.html'
     context_object_name = "hostlist"
@@ -121,6 +143,7 @@ class HostListView(ListView):
 
 
 class AddHostList(AddTempView, View):
+
     def post(self, request, *args, **kwargs):
         cursor = connection.cursor()
         form = forms.HostListForm(request.POST, request.FILES)
@@ -134,7 +157,9 @@ class AddHostList(AddTempView, View):
             return HttpResponse(form.errors.as_json())
 
 
-class DelHostList(View):
+class DelHostList(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def post(self, request):
         data = request.POST
         try:
@@ -145,7 +170,8 @@ class DelHostList(View):
             return HttpResponse('{"status": "false", "msg": "%s"}' % e, content_type="application/json")
 
 
-class EditHostList(View):
+class EditHostList(LoginRequiredMixin, View):
+    login_url = '/login/'
     template_name = 'client/edit.html'
     form_class = forms.HostListForm
 
@@ -164,7 +190,8 @@ class EditHostList(View):
             return HttpResponse('{"status": "false", "msg": "修改失败"}', content_type="application/json")
 
 
-class ExecHost(View):
+class ExecHost(LoginRequiredMixin, View):
+    login_url = '/login/'
     template_name = 'client/exec.html'
     form_class = forms.HostListForm
 
@@ -188,14 +215,16 @@ class ExecHost(View):
                         fs.write(chunk)
                         # fs.close()
                 SshUpload(list.host_ip, list.host_port, list.host_user, list.host_password, f.name, localpath,
-                               list.des_path, list.dep_path).run()
+                          list.des_path, list.dep_path).run()
         elif plat == '2':
             pass
 
         return HttpResponse('{"status": "true", "msg": "成功"}', content_type="application/json")
 
 
-class HostTestConnectView(View):
+class HostTestConnectView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def post(self, request, *args, **kwargs):
         form = forms.HostListForm(request.POST)
 
@@ -215,7 +244,8 @@ class HostTestConnectView(View):
         return HttpResponse(form.is_valid())
 
 
-class HostListUpdateView(UpdateView):
+class HostListUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
     model = HostList
     form_class = forms.HostListForm
     template_name = 'UpdateHostList.html'
@@ -233,7 +263,9 @@ class HostListUpdateView(UpdateView):
 #     model = HostList
 #     success_url = reverse_lazy('deploy_app:hostList')
 
-class DeleteView(View):
+class DeleteView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
     def get(self, request):
         host_id = request.GET.get('host_id')
         if not host_id:
@@ -248,7 +280,8 @@ class DeleteView(View):
         return HttpResponseRedirect('/hostlist')
 
 
-class InstallView(ListView):
+class InstallView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     model = InstallServer
     template_name = 'Install.html'
     context_object_name = 'hoststatus'
@@ -281,4 +314,3 @@ def Site(request):
 
 def Bootstrap(request):
     return render(request, 'public/layout.html')
-

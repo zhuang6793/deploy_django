@@ -16,8 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from deploy_app import views
+from .views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('deploy_app.urls')),
+    path('', index.Index.as_view()),
+    path('login/', index.login),
+    path('login/out/', index.logout),
+    path('api/', include('deploy_app.urls')),
 ]
