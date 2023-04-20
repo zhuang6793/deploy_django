@@ -49,23 +49,23 @@
                         <span class="nav-label">仪表盘</span></a>
                 </li>
                 <li>
-                    <a href="{%  url 'deploy_app:list' %}"><i class="fa fa-desktop fa-lg"></i>
+                    <a href="{% url 'deploy_app:list' %}"><i class="fa fa-desktop fa-lg"></i>
                         <span class="nav-label">主机列表</span></a>
                 </li>
                 <li>
-                    <a href="{%  url 'deploy_app:deploy' %}"><i class="fa fa-wrench fa-lg"></i>
+                    <a href="{% url 'deploy_app:deploy' %}"><i class="fa fa-wrench fa-lg"></i>
                         <span class="nav-label">部署</span></a>
                 </li>
                 <li>
-                    <a href="{%  url 'deploy_app:index' %}"><i class="fa fa-edit fa-lg"></i>
+                    <a href="{% url 'deploy_app:index' %}"><i class="fa fa-edit fa-lg"></i>
                         <span class="nav-label">安装</span></a>
                 </li>
                 <li>
-                    <a href="{%  url 'deploy_app:index' %}"><i class="fa fa-heartbeat fa-lg"></i>
+                    <a href="{% url 'deploy_app:index' %}"><i class="fa fa-heartbeat fa-lg"></i>
                         <span class="nav-label">监控</span></a>
                 </li>
                 <li>
-                    <a href="{%  url 'deploy_app:index' %}"><i class="fa fa-cog fa-lg"></i>
+                    <a href="{% url 'deploy_app:index' %}"><i class="fa fa-cog fa-lg"></i>
                         <span class="nav-label">设置</span></a>
                 </li>
             </ul>
@@ -106,49 +106,79 @@
 </html>
 
 <script>
-      $(document).ready(function(){
-            var active_node = $("#side-menu a[href='{{ request.path }}']");
-            active_node.parent().addClass("active");
-            /*if (active_node.parent().parent().hasClass("collapse")){
-                active_node.parent().parent().addClass("in");
-            }*/
-            });
+    $(document).ready(function () {
+        var active_node = $("#side-menu a[href='{{ request.path }}']");
+        active_node.parent().addClass("active");
+        /*if (active_node.parent().parent().hasClass("collapse")){
+            active_node.parent().parent().addClass("in");
+        }*/
+    });
 
 
-    /*
-{#window.nps = { "web_base_url":   }#}
-    googleTranslateElementInit()
-
-     function googleTranslateElementInit() {
-         new google.translate.TranslateElement({
-             layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL
-         }, 'wrapper');
-     }
-*/
-
-function displayHideUI(){
-            var value = $('#option').val();
-            if(value=='1'){
-                $('#deployWeb').css('display','block');
-                $('#deployPro').css('display','none');
-            }
-            if(value=='2'){
-                $('#deployWeb').css('display','none');
-                $('#deployPro').css('display','block');
-            }
-
+    function progressHandlingFunction(e) {
+        if (e.lengthComputable) {
+            var percentComplete = Math.round((e.loaded / e.total) * 100);
+            $('#progressbar').text(percentComplete + '%');
+            $('#progressbar').css('width', percentComplete + '%');
         }
-function addFile(info){
+    }
+
+
+    function displayHideUI() {
+        var value = $('#option').val();
+        if (value == '1') {
+            $('#deployWeb').css('display', 'block');
+            $('#deployPro').css('display', 'none');
+        }
+        if (value == '2') {
+            $('#deployWeb').css('display', 'none');
+            $('#deployPro').css('display', 'block');
+        }
+
+    }
+
+    function addFile(info) {
         if (info == 'web') {
             var div = document.getElementById("deploy_file");
-            div.innerHTML += "<div class='col-sm-10'><input class='form-control'  type='file' name='web_file' placeholder=''></div>";
-            }
-        if (info == 'be'){
+            div.innerHTML += "<div class='col-sm-10'><input class='form-control' id='fileupload'  type='file' name='web_file' placeholder=''></div>";
+        }
+        if (info == 'be') {
             var div = document.getElementById("be_file");
-            div.innerHTML += "<div class='col-sm-10'><input class='form-control'  type='file' name='be_file' placeholder=''></div>";
-            }
-}
+            div.innerHTML += "<div class='col-sm-10'><input class='form-control' id='fileupload'  type='file' name='be_file' placeholder=''></div>";
+        }
+    }
 
+    function uploadFiles() {
+        var form = document.getElementById("fileform");
+        const files = $('#fileupload')[0].files;
+        const formData = new FormData(form);
+        for (let i = 0; i < files.length; i++) {
+            formData.append('upload_file', files[i]);
+        }
+        $.ajax({
+            type: 'POST',
+            url: '{% url "deploy_app:exec" %}',
+            data: formData,
+            contentType: false,
+            processData: false,
+            xhr: function () {
+                const xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function (e) {
+                    if (e.lengthComputable) {
+                        var percent = Math.round((e.loaded / e.total) * 100);
+                        $('.progress-bar').css('width', percent + '%');
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function (data) {
+                if (data.is_valid) {
+                    $('#fileTable tbody').prepend('<tr><td>' + data.name + '</td><td><a href="' + data.url + '">Download</a></td></tr>');
+                    $('.progress-bar').css('width', '0%');
+                }
+            }
+        });
+    }
 
 </script>
 

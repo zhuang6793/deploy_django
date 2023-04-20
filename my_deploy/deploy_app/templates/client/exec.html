@@ -3,9 +3,9 @@
 <div class="row">
     <div class="col-md-12 col-md-auto">
         <div class="ibox float-e-margins">
-            <h3 class="ibox-title">部署客户端</h3>
+            <h3 class="ibox-title">部署客户端 {{ list.host_name }}</h3>
             <div class="ibox-content">
-                <form class="form-horizontal" id="fileform" action="/client/exec" method="post" enctype="multipart/form-data">
+                <form class="form-horizontal" id="fileform" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="{{ list.id }}">
                     <div class="form-group" id="type">
                         <label class="control-label font-bold">部署端</label>
@@ -22,14 +22,14 @@
                             <input class="btn btn-success"  type="button" onclick="addFile('web')" value="新增">
                         </div>
                         <div class="col-sm-10">
-                            <input class="form-control"  type="file" name="web_file" placeholder="">
+                            <input class="form-control" id="fileupload" type="file" name="web_file" placeholder="">
                         </div>
                     </div>
 
                     <div class="hr-line-dashed"></div>
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-2">
-                            <button class="btn btn-success" form="fileform" type="submit">
+                            <button class="btn btn-success" form="fileform" onclick="uploadFiles()" type="submit">
                                 <i class="fa fa-fw fa-lg fa-save"></i><span> 部署 </span>
                             </button>
                         </div>
@@ -39,7 +39,7 @@
                         <div class="form-group" id="jar_file">
                         <label class="control-label font-bold" >部署文件</label>
                         <div class="col-sm-10">
-                            <input class="btn btn-success"  type="button" onclick="addFile('be')" value="新增">
+                            <input class="btn btn-success" type="button" onclick="addFile('be')" value="新增">
                         </div>
                             <div id="be_file">
 

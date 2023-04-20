@@ -76,7 +76,7 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button class="btn btn-success" type="button" onclick="submitform('add', '/client/add', $('form').serializeArray(), $('#id_host_key_file').prop('files'))">
+                                <button class="btn btn-success" type="button" onclick="submitform('add', '{% url 'deploy_app:add' %}', $('form').serializeArray(), $('#id_host_key_file').prop('files'))">
                                     <i class="fa fa-fw fa-lg fa-check-circle"></i> <span>新增</span>
                                 </button>
                             </div>

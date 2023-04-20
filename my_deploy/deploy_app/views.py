@@ -1,16 +1,18 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.views.generic import TemplateView, View, ListView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import connection
-from .models import HostList, InstallServer
-
-from django.core import serializers
-from . import forms
-import paramiko
-import os, platform
+import os
+import platform
 import subprocess
+
+import paramiko
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
+from django.db import connection
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, View, ListView, UpdateView
+
+from . import forms
+from .models import HostList, InstallServer
 
 cur_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -154,6 +156,7 @@ class AddHostList(AddTempView, View):
             form.save()
             return HttpResponse('{"status": "true", "msg": "添加成功"}', content_type="application/json")
         else:
+            print(form.errors.as_json())
             return HttpResponse(form.errors.as_json())
 
 

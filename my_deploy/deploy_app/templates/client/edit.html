@@ -69,7 +69,7 @@
                     <div class="hr-line-dashed"></div>
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-2">
-                            <button class="btn btn-success" type="button" onclick="submitform('add', '/client/edit', $('form').serializeArray(), $('#id_host_key_file').prop('files'))"> <i
+                            <button class="btn btn-success" type="button" onclick="submitform('edit', '{% url 'deploy_app:edit' %}', $('form').serializeArray(), $('#id_host_key_file').prop('files'))"> <i
                                     class="fa fa-fw fa-lg fa-save"></i><span> 保存 </span>
                             </button>
                         </div>

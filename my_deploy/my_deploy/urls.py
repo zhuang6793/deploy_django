@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from deploy_app import views
 from .views import index
 
 urlpatterns = [

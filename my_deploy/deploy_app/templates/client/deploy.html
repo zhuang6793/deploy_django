@@ -114,7 +114,7 @@
                         btn_group = '<div class="btn-group">'
                         {#btn_group += '<a onclick="submitform(\'delete\', \'/client/del/\', {\'id\':' + row.id#}
                         {#btn_group += '}, \'\')" class="btn btn-outline btn-danger"><i class="fa fa-trash"></i></a>'#}
-                        btn_group += '<a href="/client/exec?id=' + row.id
+                        btn_group += '<a href="{% url 'deploy_app:exec' %}?id=' + row.id
                         btn_group += '" class="btn btn-outline btn-success"><i class="fa fa-edit"></i></a></div>'
                         return btn_group
                     }

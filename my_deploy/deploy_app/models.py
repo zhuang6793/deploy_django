@@ -11,8 +11,8 @@ class HostList(models.Model):
     host_port = models.IntegerField('端口', default=22)
     host_key_file = models.FileField('密钥', upload_to='key_file', null=True, blank=True)
     domain = models.CharField('域名', max_length=200, null=True, blank=True)
-    des_path = models.CharField('目标路径', max_length=200, null=True)
-    dep_path = models.CharField('部署路径', max_length=200, null=True)
+    des_path = models.CharField('目标路径', max_length=200, null=True, blank=True)
+    dep_path = models.CharField('部署路径', max_length=200, null=True, blank=True)
     is_active = models.BooleanField('是否活跃', default=True)
 
     class Meta:
