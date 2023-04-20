@@ -140,29 +140,36 @@
     function addFile(info) {
         if (info == 'web') {
             var div = document.getElementById("deploy_file");
-            div.innerHTML += "<div class='col-sm-10'><input class='form-control' id='fileupload'  type='file' name='web_file' placeholder=''></div>";
+            div.innerHTML += "<div class='col-sm-10'><input class='form-control progress-bar' id='fileupload'  type='file' name='web_file' placeholder=''></div>";
         }
         if (info == 'be') {
             var div = document.getElementById("be_file");
-            div.innerHTML += "<div class='col-sm-10'><input class='form-control' id='fileupload'  type='file' name='be_file' placeholder=''></div>";
+            div.innerHTML += "<div class='col-sm-10'><input class='form-control progress-bar' id='fileupload'  type='file' name='be_file' placeholder=''></div>";
         }
     }
 
-    function uploadFiles() {
-        var form = document.getElementById("fileform");
-        const files = $('#fileupload')[0].files;
-        const formData = new FormData(form);
+    function uploadFiles(url, postdata) {
+        postsubmit = false;
+        var files = $('#fileupload')[0].files;
+        var formData = new FormData();
+
         for (let i = 0; i < files.length; i++) {
-            formData.append('upload_file', files[i]);
+            formData.append('web_file', files[i]);
         }
+
+        $.each(postdata, function (i, field) {
+            formData.append(field.name, field.value)
+            formData.append(i, postdata[i])
+        })
+
         $.ajax({
-            type: 'POST',
-            url: '{% url "deploy_app:exec" %}',
+            type: "POST",
+            url: url,
             data: formData,
             contentType: false,
             processData: false,
             xhr: function () {
-                const xhr = new window.XMLHttpRequest();
+                var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener('progress', function (e) {
                     if (e.lengthComputable) {
                         var percent = Math.round((e.loaded / e.total) * 100);
@@ -172,11 +179,12 @@
                 return xhr;
             },
             success: function (data) {
-                if (data.is_valid) {
-                    $('#fileTable tbody').prepend('<tr><td>' + data.name + '</td><td><a href="' + data.url + '">Download</a></td></tr>');
-                    $('.progress-bar').css('width', '0%');
-                }
+                {#if (data.is_valid) {#}
+                {#    $('#fileTable tbody').prepend('<tr><td>' + data.name + '</td><td><a href="' + data.url + '">Download</a></td></tr>');#}
+                {#    $('.progress-bar').css('width', '0%');#}
+                alert(data.msg);
             }
+
         });
     }
 

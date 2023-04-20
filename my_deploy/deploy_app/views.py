@@ -68,14 +68,25 @@ class SshUpload:
         return sftp
 
     def run(self):
-        self.sftp_client().put(localpath=self.localpath + self.filename, remotepath=self.remotepath + self.filename)
 
-        stdin, stdout, stderr = self.sshClient.exec_command(
-            f"sudo mv  {self.remotepath}{self.filename}  {self.deppath}{self.filename.split('.')[0]}  ")
-        print(stdout.readline(), stderr.readline())
-        stdin, stdout, stderr = self.sshClient.exec_command(
-            f"cd  {self.deppath}{self.filename.split('.')[0]}  && sudo unzip -o {self.filename}")
-        print(stdout.readline(), stderr.readline())
+        info_list = []
+        print(self.filename.split('.')[-1])
+        if self.filename.split('.')[-1] != 'zip':
+            return "只支持zip格式的文件"
+        else:
+            self.sftp_client().put(localpath=self.localpath + self.filename,
+                                   remotepath="%s'%s'" % (self.remotepath, self.filename))
+
+            stdin, stdout, stderr = self.sshClient.exec_command(
+                f"sudo mv  {self.remotepath}'{self.filename}'  {self.deppath}'{self.filename.split('.')[0]}'  ")
+            info_list.append(stdout.readline())
+            info_list.append(stderr.readline())
+            stdin, stdout, stderr = self.sshClient.exec_command(
+                f"cd  {self.deppath}'{self.filename.split('.')[0]}'  && sudo unzip -o '{self.filename}'")
+            info_list.append(stdout.readline())
+            info_list.append(stderr.readline())
+
+            return info_list
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -208,7 +219,7 @@ class ExecHost(LoginRequiredMixin, View):
         list = HostList.objects.get(id=request.POST.get('id'))
         file = request.FILES.getlist('web_file')
         plat = request.POST.get('option')
-
+        list_msg = []
         if not os.path.exists(localpath):
             os.mkdir(localpath)
         if plat == '1':
@@ -217,12 +228,12 @@ class ExecHost(LoginRequiredMixin, View):
                     for chunk in f.chunks():
                         fs.write(chunk)
                         # fs.close()
-                SshUpload(list.host_ip, list.host_port, list.host_user, list.host_password, f.name, localpath,
-                          list.des_path, list.dep_path).run()
+                msg = SshUpload(list.host_ip, list.host_port, list.host_user, list.host_password, f.name, localpath,
+                                list.des_path, list.dep_path).run()
+                list_msg.append(msg)
         elif plat == '2':
             pass
-
-        return HttpResponse('{"status": "true", "msg": "成功"}', content_type="application/json")
+        return HttpResponse('{"status": "true", "msg": "%s"}' % list_msg[0], content_type="application/json")
 
 
 class HostTestConnectView(LoginRequiredMixin, View):
