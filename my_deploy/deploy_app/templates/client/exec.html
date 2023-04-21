@@ -16,15 +16,16 @@
                         </div>
                         <div id="deployWeb">
 
-                            <div class="form-group" id="deploy_file">
+                            <div class="form-group">
                                 <label class="control-label font-bold">部署文件</label>
                                 <div class="col-sm-10">
                                     <input class="btn btn-success" type="button" onclick="addFile('web')" value="新增">
                                 </div>
-                                <div class="col-sm-10">
-                                    <input class="form-control progress-bar" id="fileupload" type="file" name="web_file"
+                                <div class="col-sm-10" id="deploy_file">
+                                    <input class="form-control" id="fileupload" type="file" name="web_file"
                                            placeholder="">
                                 </div>
+                                <span id="warning"></span>
                             </div>
 
                             <div class="hr-line-dashed"></div>

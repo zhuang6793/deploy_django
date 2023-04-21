@@ -44,6 +44,7 @@ class SshUpload:
         self.remotepath = self._path(remotepath)
         self.deppath = self._path(deppath)
         self.sshClient = self.ssh_client(self.ip, self.port, self.user, self.passwd)
+        self.local_file_size = os.path.getsize(self.localpath + self.filename)
 
     def ssh_client(self, ip, port, user, passwd):
         client = paramiko.SSHClient()
@@ -67,22 +68,25 @@ class SshUpload:
 
         return sftp
 
-    def run(self):
+    def callback(self, current, total):
+        progress = min(int(current / self.local_file_size * 100), 100)
+        print('上传进度：{}'.format(progress))
 
+    def run(self):
+        remot_file_name = self.filename.replace(" ", "")
         info_list = []
-        print(self.filename.split('.')[-1])
         if self.filename.split('.')[-1] != 'zip':
             return "只支持zip格式的文件"
         else:
             self.sftp_client().put(localpath=self.localpath + self.filename,
-                                   remotepath="%s'%s'" % (self.remotepath, self.filename))
+                                   remotepath=self.remotepath + remot_file_name, callback=self.callback)
 
             stdin, stdout, stderr = self.sshClient.exec_command(
-                f"sudo mv  {self.remotepath}'{self.filename}'  {self.deppath}'{self.filename.split('.')[0]}'  ")
+                f"sudo mv  {self.remotepath}{remot_file_name}  {self.deppath}{remot_file_name.split('.')[0]}  ")
             info_list.append(stdout.readline())
             info_list.append(stderr.readline())
             stdin, stdout, stderr = self.sshClient.exec_command(
-                f"cd  {self.deppath}'{self.filename.split('.')[0]}'  && sudo unzip -o '{self.filename}'")
+                f"cd  {self.deppath}{remot_file_name.split('.')[0]}  && sudo unzip -o {remot_file_name}")
             info_list.append(stdout.readline())
             info_list.append(stderr.readline())
 
@@ -233,6 +237,7 @@ class ExecHost(LoginRequiredMixin, View):
                 list_msg.append(msg)
         elif plat == '2':
             pass
+
         return HttpResponse('{"status": "true", "msg": "%s"}' % list_msg[0], content_type="application/json")
 
 
