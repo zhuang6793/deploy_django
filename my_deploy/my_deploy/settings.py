@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'deploy_app',
-    'otm'
+    'otm',
+    'channels'
 ]
 
 MIDDLEWARE = [

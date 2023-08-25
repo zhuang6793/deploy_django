@@ -73,6 +73,15 @@
 {#                                {{ form.host_key_file }}#}
                             </div>
                         </div>
+                        <div class="form-group" id="test_connect">
+                            <div class="col-sm-10">
+                                <button class="btn btn-default" type="button" onclick="submitform('test', '{% url 'deploy_app:hostTestConnect' %}', $('form').serializeArray(), $('#id_host_key_file').prop('files'))">
+                                    <span>测试连接</span>
+                                </button>
+                                <span id="info"></span>
+                            </div>
+                        </div>
+
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">

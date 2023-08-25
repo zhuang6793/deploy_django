@@ -38,7 +38,7 @@
                 <li class="nav-header">
                     <div class="dropdown profile-element">
                         <span><i class="fa fa-user-cog fa-3x"></i></span>
-                        <span class="clear"> <span class="block m-t-xs"><strong class="font-bold">管理员</strong></span>
+                        <span class="clear"> <span class="block m-t-xs"><strong class="font-bold">{{ user.get_username }}</strong></span>
                             <span class="text-muted text-xs block">系统</span>
                             </span>
                     </div>
@@ -134,13 +134,12 @@
             $('#deployWeb').css('display', 'none');
             $('#deployPro').css('display', 'block');
         }
-
     }
 
     function addFile(info) {
         if (info == 'web') {
             var div = document.getElementById("deploy_file");
-            div.innerHTML += "<input class='form-control' id='fileupload'  type='file' name='web_file' placeholder=''>";
+            div.innerHTML += "<input class='form-control' id='fileupload'  type='file' name='web_file' multiple='multiple'>";
         }
         if (info == 'be') {
             var div = document.getElementById("be_file");
@@ -149,18 +148,7 @@
     }
 
     function uploadFiles(url, postdata) {
-        postsubmit = false;
-        var files = $('#fileupload')[0].files;
-        var formData = new FormData();
-
-        for (let i = 0; i < files.length; i++) {
-            formData.append('web_file', files[i]);
-        }
-
-        $.each(postdata, function (i, field) {
-            formData.append(field.name, field.value)
-            formData.append(i, postdata[i])
-        })
+        var formData = new FormData($('#fileform')[0]);
 
         $.ajax({
             type: "POST",
@@ -168,7 +156,7 @@
             data: formData,
             contentType: false,
             processData: false,
-            beforeSend: function (data) {
+            beforeSend: function () {
                 $('#warning').text('正在处理，请稍等！');
             },
             success: function (data) {
@@ -177,13 +165,15 @@
                     if (postsubmit) {
                         document.location.reload();
                     } else {
-                        history.back(-1);
+                        {#history.back(-1);#}
                     }
                 }
-            }
-
+            },
         });
     }
+
+
+
 
 </script>
 

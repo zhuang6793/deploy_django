@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title langtag="title-admin">O&M - SSH终端</title>
+
+    <!-- Mainly scripts -->
+    <!-- Latest compiled and minified CSS -->
+    <link href="../../static/css/fontawesome.min.css" rel="stylesheet">
+    <link href="../../static/css/solid.min.css" rel="stylesheet">
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../../static/css/style.css" rel="stylesheet">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="../../static/js/jquery-3.4.1.min.js"></script>
+    <script src="../../static/js/popper.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
+    <script src="../../static/js/bootstrap-table.min.js"></script>
+    <script src="../../static/js/bootstrap-table-locale-all.min.js"></script>
+    <script src="../../static/js/echarts.min.js"></script>
+    <script src="../../static/js/inspinia.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="../../static/js/language.js" type="text/javascript"></script>
+
+</head>
+
+<body class="pace-done fixed-nav fixed-nav-basic">
+<div id="wrapper">
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                        <span><i class="fa fa-user-cog fa-3x"></i></span>
+                        <span class="clear"> <span class="block m-t-xs"><strong class="font-bold">{{ user.get_username }}</strong></span>
+                            <span class="text-muted text-xs block">系统</span>
+                            </span>
+                    </div>
+                    <div class="logo-element">O&M</div>
+                </li>
+                {% for list in hostlist %}
+                    <li>
+                        <a href="/"><i class="fa fa-tachometer-alt fa-lg"></i>
+                            <span class="nav-label">{{ list.host_name }}</span></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar white-bg navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+{#                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>#}
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message"><span></span></span>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+
+
+        </div>
+        <div class="footer fixed">
+            <div class="float-right">
+                <span langtag="word-readmore"></span> <strong><a href="https://ehang.io/nps"
+                                                                 langtag="word-go"></a></strong>
+            </div>
+            <div><strong langtag="word-copyright"></strong> <span langtag="application"></span> &copy; 2018-2020</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        var active_node = $("#side-menu a[href='{{ request.path }}']");
+        active_node.parent().addClass("active");
+        /*if (active_node.parent().parent().hasClass("collapse")){
+            active_node.parent().parent().addClass("in");
+        }*/
+    });
+
+
+    function progressHandlingFunction(e) {
+        if (e.lengthComputable) {
+            var percentComplete = Math.round((e.loaded / e.total) * 100);
+            $('#progressbar').text(percentComplete + '%');
+            $('#progressbar').css('width', percentComplete + '%');
+        }
+    }
+
+
+    function displayHideUI() {
+        var value = $('#option').val();
+        if (value == '1') {
+            $('#deployWeb').css('display', 'block');
+            $('#deployPro').css('display', 'none');
+        }
+        if (value == '2') {
+            $('#deployWeb').css('display', 'none');
+            $('#deployPro').css('display', 'block');
+        }
+    }
+
+    function addFile(info) {
+        if (info == 'web') {
+            var div = document.getElementById("deploy_file");
+            div.innerHTML += "<input class='form-control' id='fileupload'  type='file' name='web_file' multiple='multiple'>";
+        }
+        if (info == 'be') {
+            var div = document.getElementById("be_file");
+            div.innerHTML += "<input class='form-control' id='fileupload'  type='file' name='be_file' placeholder=''>";
+        }
+    }
+
+    function uploadFiles(url, postdata) {
+        var formData = new FormData($('#fileform')[0]);
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function () {
+                $('#warning').text('正在处理，请稍等！');
+            },
+            success: function (data) {
+                alert(data.msg);
+                if (data.status) {
+                    if (postsubmit) {
+                        document.location.reload();
+                    } else {
+                        {#history.back(-1);#}
+                    }
+                }
+            },
+        });
+    }
+
+
+</script>
+

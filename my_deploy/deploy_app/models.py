@@ -1,4 +1,5 @@
 from django.db import models
+from .tool.ssh_connect import SshUpload
 
 
 # Create your models here.
@@ -15,9 +16,17 @@ class HostList(models.Model):
     dep_path = models.CharField('部署路径', max_length=200, null=True, blank=True)
     is_active = models.BooleanField('是否活跃', default=True)
 
+    def get_ssh(self):
+        return SshUpload(self.host_ip, self.host_user, self.host_password)
+
     class Meta:
         verbose_name = '主机列表'
         verbose_name_plural = verbose_name
+        permissions = (
+            ('can_sanyin', '三盈项目'),
+            ('can_sanma', '三马项目'),
+            ('can_local', '本地项目')
+        )
 
     def __str__(self):
         return '%s,%s,%s,%s,%s' % (self.host_name, self.host_ip, self.host_user, self.host_password, self.host_port)

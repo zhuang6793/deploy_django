@@ -1,15 +1,11 @@
 import os
-import platform
-import subprocess
-
 import paramiko
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import serializers
-from django.db import connection
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, ListView, UpdateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from . import forms
 from .models import HostList, InstallServer
@@ -17,132 +13,9 @@ from .models import HostList, InstallServer
 cur_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def server_status(ip_address):
-    os_name = platform.system()
-
-    if os_name == 'Windows':
-        response = subprocess.Popen("ping -n 1 -w 100 %s " % ip_address, stdout=subprocess.PIPE)
-    else:
-        response = subprocess.Popen("ping -c 1 -w 100 %s" % ip_address, stdout=subprocess.PIPE)
-
-    if response.wait() == 0:
-        status = 'Online'
-    else:
-        status = 'Offline'
-
-    return status
-
-
-class SshUpload:
-    def __init__(self, ip, port, user, passwd, filename, localpath, remotepath, deppath):
-        self.ip = ip
-        self.port = port
-        self.user = user
-        self.passwd = passwd
-        self.filename = filename
-        self.localpath = self._path(localpath)
-        self.remotepath = self._path(remotepath)
-        self.deppath = self._path(deppath)
-        self.sshClient = self.ssh_client(self.ip, self.port, self.user, self.passwd)
-        self.local_file_size = os.path.getsize(self.localpath + self.filename)
-
-    def ssh_client(self, ip, port, user, passwd):
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname=ip, port=port, username=user, password=passwd)
-
-        return client
-
-    def _path(self, path):
-        if path.split('/')[-1] != '':
-            path = path + '/'
-
-        return path
-
-    def sftp_client(self):
-        tran = paramiko.Transport((self.ip, int(self.port)))
-
-        tran.connect(username=self.user, password=self.passwd)
-
-        sftp = paramiko.SFTPClient.from_transport(tran)
-
-        return sftp
-
-    def callback(self, current, total):
-        progress = min(int(current / self.local_file_size * 100), 100)
-        print('上传进度：{}'.format(progress))
-
-    def run(self):
-        remot_file_name = self.filename.replace(" ", "")
-        info_list = []
-        if self.filename.split('.')[-1] != 'zip':
-            return "只支持zip格式的文件"
-        else:
-            self.sftp_client().put(localpath=self.localpath + self.filename,
-                                   remotepath=self.remotepath + remot_file_name, callback=self.callback)
-
-            stdin, stdout, stderr = self.sshClient.exec_command(
-                f"sudo mv  {self.remotepath}{remot_file_name}  {self.deppath}{remot_file_name.split('.')[0]}  ")
-            info_list.append(stdout.readline())
-            info_list.append(stderr.readline())
-            stdin, stdout, stderr = self.sshClient.exec_command(
-                f"cd  {self.deppath}{remot_file_name.split('.')[0]}  && sudo unzip -o {remot_file_name}")
-            info_list.append(stdout.readline())
-            info_list.append(stderr.readline())
-
-            return info_list
-
-
 class IndexView(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     template_name = 'index/index.html'
-
-
-class AddTempView(LoginRequiredMixin, TemplateView, View):
-    login_url = '/login/'
-    template_name = 'client/add.html'
-
-    def get_context_data(self, **kwargs):
-        form = forms.HostListForm()
-        context = super(AddTempView, self).get_context_data(**kwargs)
-        context['form'] = form
-        return context
-
-
-class GetClientListView(LoginRequiredMixin, View):
-    login_url = '/login/'
-
-    def post(self, request, *args, **kwargs):
-        search = request.POST
-        pageSize = int(search.get('limit'))
-        pageNumber = (int(search.get('offset')) / pageSize) + 1
-        right_boundary = pageSize * pageNumber
-        articles = HostList.objects.all()[(pageNumber - 1) * pageSize:right_boundary]
-        total = HostList.objects.all().count()
-        rows = []
-        for article in articles:
-            rows.append(
-                {'id': article.id, 'domain': article.domain, 'host_user': article.host_user, 'host_ip': article.host_ip,
-                 'host_name': article.host_name, 'host_port': article.host_port,
-                 'Status': server_status(article.host_ip)})
-        return JsonResponse({'code': 200, 'rows': rows, 'total': total})
-
-
-class ClientListView(TemplateView, GetClientListView):
-    template_name = 'client/list.html'
-
-
-class DeployListView(TemplateView, GetClientListView):
-    template_name = 'client/deploy.html'
-
-
-class hostlist(LoginRequiredMixin, View):
-    login_url = '/login/'
-
-    def get(self, request, *args, **kwargs):
-        list = HostList.objects.all()
-        result_serialize = serializers.serialize('json', list)
-        return HttpResponse(result_serialize, "application/json")
 
 
 class HostListView(LoginRequiredMixin, ListView):
@@ -159,24 +32,9 @@ class HostListView(LoginRequiredMixin, ListView):
         return context
 
 
-class AddHostList(AddTempView, View):
-
-    def post(self, request, *args, **kwargs):
-        cursor = connection.cursor()
-        form = forms.HostListForm(request.POST, request.FILES)
-        if form.is_valid():
-            cursor.execute("SET @i=0;")
-            cursor.execute("UPDATE `deploy_app_hostlist` SET `id`=(@i:=@i+1);")
-            cursor.execute("ALTER TABLE `deploy_app_hostlist` AUTO_INCREMENT=0;")
-            form.save()
-            return HttpResponse('{"status": "true", "msg": "添加成功"}', content_type="application/json")
-        else:
-            print(form.errors.as_json())
-            return HttpResponse(form.errors.as_json())
-
-
-class DelHostList(LoginRequiredMixin, View):
+class DelHostList(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
+    permission_required = 'polls.can_vote'
 
     def post(self, request):
         data = request.POST
@@ -188,10 +46,11 @@ class DelHostList(LoginRequiredMixin, View):
             return HttpResponse('{"status": "false", "msg": "%s"}' % e, content_type="application/json")
 
 
-class EditHostList(LoginRequiredMixin, View):
+class EditHostList(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = '/login/'
     template_name = 'client/edit.html'
     form_class = forms.HostListForm
+    permission_required = 'polls.can_vote'
 
     def get(self, request):
         id = request.GET.get('id')
@@ -208,45 +67,11 @@ class EditHostList(LoginRequiredMixin, View):
             return HttpResponse('{"status": "false", "msg": "修改失败"}', content_type="application/json")
 
 
-class ExecHost(LoginRequiredMixin, View):
-    login_url = '/login/'
-    template_name = 'client/exec.html'
-    form_class = forms.HostListForm
-
-    def get(self, request):
-        id = request.GET.get('id')
-        list = HostList.objects.get(id=id)
-        return render(request, self.template_name, {'list': list})
-
-    def post(self, request, *args, **kwargs):
-        localpath = cur_path + '/deploy_file/'
-        list = HostList.objects.get(id=request.POST.get('id'))
-        file = request.FILES.getlist('web_file')
-        plat = request.POST.get('option')
-        list_msg = []
-        if not os.path.exists(localpath):
-            os.mkdir(localpath)
-        if plat == '1':
-            for f in file:
-                with open(localpath + f.name, 'wb+') as fs:
-                    for chunk in f.chunks():
-                        fs.write(chunk)
-                        # fs.close()
-                msg = SshUpload(list.host_ip, list.host_port, list.host_user, list.host_password, f.name, localpath,
-                                list.des_path, list.dep_path).run()
-                list_msg.append(msg)
-        elif plat == '2':
-            pass
-
-        return HttpResponse('{"status": "true", "msg": "%s"}' % list_msg[0], content_type="application/json")
-
-
 class HostTestConnectView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def post(self, request, *args, **kwargs):
         form = forms.HostListForm(request.POST)
-
         if form.is_valid():
             ip = form.cleaned_data['host_ip']
             username = form.cleaned_data['host_user']
@@ -316,6 +141,8 @@ class InstallView(LoginRequiredMixin, ListView):
         #         print(e)
         # return hoststatus
         print(hoststatus.get())
+
+
 
 
 class get_service_status(View):

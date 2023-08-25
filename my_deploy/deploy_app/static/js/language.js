@@ -38,7 +38,6 @@
     }
 
 
-
     $.fn.setLang = function (dom) {
         languages['current'] = $('#languagemenu').attr('lang');
         if (dom == '') {
@@ -94,11 +93,12 @@ function langreply(langstr) {
 }
 
 function submitform(action, url, postdata, filedata) {
+    console.log(postdata)
     postsubmit = false;
     var fromData = new FormData();
     $.each(postdata, function (i, field) {
         fromData.append(field.name, field.value)
-        fromData.append(i,postdata[i])
+        fromData.append(i, postdata[i])
     })
     fromData.append("host_key_file", filedata[0])
     var data = fromData;
@@ -109,6 +109,7 @@ function submitform(action, url, postdata, filedata) {
             action = ('您确认要删除它吗？')
             if (!confirm(action)) return;
             postsubmit = true;
+
         case 'add':
         case 'edit':
             $.ajax({
@@ -126,6 +127,17 @@ function submitform(action, url, postdata, filedata) {
                             history.back(-1);
                         }
                     }
+                }
+            });
+        case 'test':
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    $('#info').text(res.msg);
                 }
             });
     }
